@@ -1,54 +1,78 @@
 "use client";
 
-import { Editor } from "@monaco-editor/react";
+import { BackgroundGradientAnimation } from "@/components/ui/background-gradient-animation";
+import { Card, HoverEffect } from "@/components/ui/card-hover-effect";
+import { FloatingNav } from "@/components/ui/floating-navbar";
 
-function extractCodeBlock(text: string): string[] {
-  // Regular expression to match text between triple backticks and exclude language identifier
-  const pattern = /```(?:\w+)?\n([\s\S]*?)```/g; // (?:\w+)? is a non-capturing group for language identifier
-  const matches: string[] = [];
-  let match: RegExpExecArray | null;
-
-  // Use the RegExp exec() method to find all matches
-  while ((match = pattern.exec(text)) !== null) {
-    matches.push(match[1].trim()); // match[1] contains the code, trim() to remove extra spaces or newlines
-  }
-
-  return matches;
-}
-
-// Example input with triple backticks
-const inputText = `
-\`\`\`python
-def is_prime(n):
-"""Checks if a number is prime."""
-if n <= 1:
-  return False
-for i in range(2, int(n**0.5) + 1):
-  if n % i == 0:
-    return False
-return True
-
-def sum_of_primes(n):
-"""Calculates the sum of the first n prime numbers."""
-primes are added to an array, and the sum is returned.
-
-print(f"The sum of the first 50 prime numbers is: {sum_of_first_50_primes}")
-\`\`\`
-`;
-
-// Extract the code block
-const codeBlock: string[] = extractCodeBlock(inputText);
-
-// Join the code blocks into a single string (if you have multiple code blocks)
-const joinedCodeBlock = codeBlock.join("\n");
 
 export default function Home() {
+  const projects = [
+    {
+      title: "Stripe",
+      description:
+        "A technology company that builds economic infrastructure for the internet.",
+      link: "https://stripe.com",
+    },
+    {
+      title: "Netflix",
+      description:
+        "A streaming service that offers a wide variety of award-winning TV shows, movies, anime, documentaries, and more on thousands of internet-connected devices.",
+      link: "https://netflix.com",
+    },
+    {
+      title: "Google",
+      description:
+        "A multinational technology company that specializes in Internet-related services and products.",
+      link: "https://google.com",
+    },
+    {
+      title: "Meta",
+      description:
+        "A technology company that focuses on building products that advance Facebook's mission of bringing the world closer together.",
+      link: "https://meta.com",
+    },
+    {
+      title: "Amazon",
+      description:
+        "A multinational technology company focusing on e-commerce, cloud computing, digital streaming, and artificial intelligence.",
+      link: "https://amazon.com",
+    },
+    {
+      title: "Microsoft",
+      description:
+        "A multinational technology company that develops, manufactures, licenses, supports, and sells computer software, consumer electronics, personal computers, and related services.",
+      link: "https://microsoft.com",
+    },
+  ];
+  const navItems = [
+    {
+      name: "Home",
+      link: "/",
+      icon: <IconHome className="h-4 w-4 text-neutral-500 dark:text-white" />,
+    },
+    {
+      name: "About",
+      link: "/about",
+      icon: <IconUser className="h-4 w-4 text-neutral-500 dark:text-white" />,
+    },
+    {
+      name: "Contact",
+      link: "/contact",
+      icon: (
+        <IconMessage className="h-4 w-4 text-neutral-500 dark:text-white" />
+      ),
+    },
+  ];
   return (
-    <Editor
-      height="90vh" // You can adjust the editor height
-      language="python" // Set the language mode (e.g., 'python' here)
-      value={joinedCodeBlock} // Provide the joined code block as a single string
-      theme="vs-dark" // You can choose other themes such as 'light' or 'vs-dark'
-    />
+    <BackgroundGradientAnimation>
+      <div>
+        <FloatingNav navItems={navItems}/>
+      </div>
+      <div className="absolute z-50 inset-0 flex items-center justify-center text-white font-bold px-4 pointer-events-none text-3xl text-center md:text-4xl lg:text-7xl">
+        <p className="bg-clip-text text-transparent drop-shadow-2xl bg-gradient-to-b from-white/80 to-white/20">
+          Gradients X Animations
+        </p>
+      </div>
+    </BackgroundGradientAnimation>
   );
 }
