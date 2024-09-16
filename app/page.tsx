@@ -4,7 +4,7 @@ import Link from 'next/link';
 const Page = () => {
   return (
     <div
-      className="flex justify-center items-center h-screen bg-cover bg-no-repeat"
+      className="flex justify-center items-center h-screen bg-cover bg-no-repeat bg-black"
       style={{
         // backgroundImage: `url("https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExZTMwYmR1NHQxcnA3M29jODUwN3V6cXgwa252Z2N5c25rdjRlb2dyZyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/9bTjZrytydVRK/giphy.webp")`,
       }}
