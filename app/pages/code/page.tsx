@@ -1,17 +1,26 @@
-// app/pages/code/page.tsx
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { Button } from "@/components/ui/button"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { BugIcon, CodeIcon, GhostIcon, LightbulbIcon } from "lucide-react"
 
-const GenerateAndCheckBuggyCodePage = () => {
+export default function GenerateAndCheckBuggyCodePage() {
   const [level, setLevel] = useState<string>('');
   const [language, setLanguage] = useState<string>('');
   const [buggyCode, setBuggyCode] = useState<string>('');
-  const [fixedCode, setFixedCode] = useState<string>('');
-  const [testCases, setTestCases] = useState<string[]>([]);
-  const [result, setResult] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const [dotCount, setDotCount] = useState(0);
+  const [suggestion, setSuggestion] = useState<string>('');
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setDotCount((prevCount) => (prevCount + 1) % 4);
+    }, 300);
+    return () => clearInterval(interval);
+  }, []);
 
   const handleGenerate = async () => {
     if (!level || !language) {
@@ -38,7 +47,7 @@ const GenerateAndCheckBuggyCodePage = () => {
 
       const data = await response.json();
       setBuggyCode(data.buggyCode);
-      setTestCases(['test1', 'test2']); // Example test cases; in a real app, these should come from your backend
+      setSuggestion(data.suggestion || 'Try to identify and fix the bug in the code!');
     } catch (err) {
       console.error('Detailed error:', err);
       setError('An error occurred while generating the buggy code. Please try again.');
@@ -47,118 +56,133 @@ const GenerateAndCheckBuggyCodePage = () => {
     }
   };
 
-  const handleCheckCode = async () => {
-    if (!fixedCode || !testCases.length) {
-      setError('Please provide fixed code and test cases.');
-      return;
-    }
-
-    setLoading(true);
-    setError(null);
-
-    try {
-      const response = await fetch('/api/check-code', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ level, language, buggyCode, fixedCode, testCases }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to check code');
-      }
-
-      const data = await response.json();
-      setResult(data.isCodeGood ? 'Good' : 'Code did not pass the test cases');
-    } catch (err) {
-      console.error('Detailed error:', err);
-      setError('An error occurred while checking the code. Please try again.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
   return (
-    <div className="p-4">
-      <h1 className="text-2xl font-bold mb-4">Generate and Check Buggy Code</h1>
+    <div className="min-h-screen bg-black text-white flex flex-col relative">
+      <style jsx global>{`
+        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+        body {
+          font-family: 'Press Start 2P', cursive;
+        }
+        .bug-bg {
+          background-image: 
+            radial-gradient(circle, #ff0000 3px, transparent 4px),
+            radial-gradient(circle, #ff0000 3px, transparent 4px);
+          background-size: 60px 60px;
+          background-position: 0 0, 30px 30px;
+          animation: moveBugs 4s linear infinite;
+        }
+        @keyframes moveBugs {
+          0% { background-position: 0 0, 30px 30px; }
+          100% { background-position: 60px 60px, 90px 90px; }
+        }
+        .pixel-border {
+          box-shadow: 
+            0 0 0 2px #000,
+            0 0 0 4px #ff0000;
+        }
+      `}</style>
       
-      <div className="mb-4">
-        <label htmlFor="level" className="block mb-2 text-sm font-medium">Select Difficulty Level:</label>
-        <select
-          id="level"
-          value={level}
-          onChange={(e) => setLevel(e.target.value)}
-          className="block w-full p-2 border border-gray-300 rounded"
-        >
-          <option value="">-- Select Level --</option>
-          <option value="intermediate">Intermediate</option>
-          <option value="beginner">Beginner</option>
-          <option value="master">Master</option>
-        </select>
+      <div className="bug-bg absolute inset-0 opacity-10"></div>
+      
+      <div className="container mx-auto p-4 relative z-10">
+        <h1 className="text-4xl font-bold mb-6 text-center text-black rounded-xl p-4 bg-yellow-400">Debug Challenge</h1>
+        
+        <div className="flex flex-col md:flex-row gap-6">
+          <div className="md:w-1/3 space-y-6">
+            <Card className="bg-gray-900 ">
+              <CardHeader>
+                <CardTitle className="text-yellow-400 flex items-center">
+                  <GhostIcon className="mr-2 h-5 w-5" />
+                  Choose Your Challenge
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div>
+                  <label htmlFor="level" className="block mb-2 text-sm font-medium text-blue-400">Select Difficulty:</label>
+                  <Select value={level} onValueChange={setLevel}>
+                    <SelectTrigger id="level" className="bg-gray-800 text-white border-red-500">
+                      <SelectValue placeholder="Select Level" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-gray-800 text-white">
+                      <SelectItem value="beginner">Beginner</SelectItem>
+                      <SelectItem value="intermediate">Intermediate</SelectItem>
+                      <SelectItem value="master">Master</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                <div>
+                  <label htmlFor="language" className="block mb-2 text-sm font-medium text-blue-400">Select Language:</label>
+                  <Select value={language} onValueChange={setLanguage}>
+                    <SelectTrigger id="language" className="bg-gray-800 text-white border-red-500">
+                      <SelectValue placeholder="Select Language" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-gray-800 text-white">
+                      <SelectItem value="python">Python</SelectItem>
+                      <SelectItem value="c">C</SelectItem>
+                      <SelectItem value="cpp">C++</SelectItem>
+                      <SelectItem value="java">Java</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                <Button
+                  onClick={handleGenerate}
+                  className="w-full bg-red-500 hover:bg-red-600 text-white px-8 py-3 rounded-full text-lg transition-transform "
+                  disabled={loading}
+                >
+                  {loading ? (
+                    <>Generating Bugs {'.'.repeat(dotCount)}</>
+                  ) : (
+                    <>
+                      <BugIcon className="mr-2 h-5 w-5" />
+                      Generate Buggy Code
+                    </>
+                  )}
+                </Button>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-gray-900  ">
+              <CardHeader>
+                <CardTitle className="text-yellow-400 flex items-center">
+                  <LightbulbIcon className="mr-2 h-5 w-5" />
+                  Suggestion
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-white">{suggestion || 'Generate a buggy code to get a suggestion!'}</p>
+              </CardContent>
+            </Card>
+          </div>
+
+          <div className="md:w-2/3 space-y-6">
+            {error && (
+              <Card className="bg-gray-900 border-yellow-500 pixel-border">
+                <CardContent>
+                  <p className="text-yellow-500">{error}</p>
+                </CardContent>
+              </Card>
+            )}
+
+            {buggyCode && (
+              <Card className="bg-gray-900">
+                <CardHeader>
+                  <CardTitle className="flex items-center text-green-400">
+                    <CodeIcon className="mr-2 h-5 w-5" />
+                    Buggy Code Generated
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <pre className="bg-gray-800 p-4 rounded-md overflow-x-auto text-green-300">
+                    <code>{buggyCode}</code>
+                  </pre>
+                </CardContent>
+              </Card>
+            )}
+          </div>
+        </div>
       </div>
-      
-      <div className="mb-4">
-        <label htmlFor="language" className="block mb-2 text-sm font-medium">Select Programming Language:</label>
-        <select
-          id="language"
-          value={language}
-          onChange={(e) => setLanguage(e.target.value)}
-          className="block w-full p-2 border border-gray-300 rounded"
-        >
-          <option value="">-- Select Language --</option>
-          <option value="python">Python</option>
-          <option value="c">C</option>
-          <option value="cpp">C++</option>
-          <option value="java">Java</option>
-        </select>
-      </div>
-      
-      <button
-        onClick={handleGenerate}
-        className="bg-blue-500 text-white p-2 rounded"
-      >
-        Generate Buggy Code
-      </button>
-
-      {loading && <p className="mt-4 text-blue-500">Generating...</p>}
-
-      {error && <p className="mt-4 text-red-500">{error}</p>}
-
-      {buggyCode && (
-        <div className="mt-4">
-          <h2 className="text-xl font-semibold">Generated Buggy Code:</h2>
-          <pre className="bg-gray-100 p-4 border rounded">{buggyCode}</pre>
-        </div>
-      )}
-
-      {buggyCode && (
-        <div className="mt-4">
-          <h2 className="text-xl font-semibold">Fix the Buggy Code:</h2>
-          <textarea
-            value={fixedCode}
-            onChange={(e) => setFixedCode(e.target.value)}
-            rows={10}
-            className="w-full p-2 border border-gray-300 rounded"
-          />
-          <button
-            onClick={handleCheckCode}
-            className="bg-green-500 text-white p-2 rounded mt-2"
-          >
-            Check Fixed Code
-          </button>
-        </div>
-      )}
-
-      {result && (
-        <div className="mt-4">
-          <h2 className="text-xl font-semibold">Result:</h2>
-          <p className={result === 'Good' ? 'text-green-500' : 'text-red-500'}>{result}</p>
-        </div>
-      )}
     </div>
   );
-};
-
-export default GenerateAndCheckBuggyCodePage;
+}
