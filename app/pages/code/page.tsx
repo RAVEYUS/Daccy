@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { BugIcon, CodeIcon, GhostIcon, LightbulbIcon } from "lucide-react"
+import Editor from "@monaco-editor/react"
 
 export default function GenerateAndCheckBuggyCodePage() {
   const [level, setLevel] = useState<string>('');
@@ -174,9 +175,9 @@ export default function GenerateAndCheckBuggyCodePage() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <pre className="bg-gray-800 p-4 rounded-md overflow-x-auto text-green-300">
-                    <code>{buggyCode}</code>
-                  </pre>
+                  <div className="bg-gray-800 p-4 rounded-md overflow-x-auto text-green-300">
+                    <Editor height="60vh" theme='vs-dark' language={language} value={buggyCode}></Editor>
+                  </div>
                 </CardContent>
               </Card>
             )}
