@@ -67,7 +67,7 @@ export default function LandingPage() {
   return (
     <div className={`min-h-screen bg-background text-foreground ${inter.className}`}>
       <header className="p-6 ml-4 flex justify-between items-center">
-        <h1 className="text-2xl">Daccy</h1>
+        <h1 className="text-2xl"><Link href="/">Daccy</Link></h1>
         <nav className="flex items-center gap-4">
           <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
             <Button variant="ghost" onClick={toggleTheme}>

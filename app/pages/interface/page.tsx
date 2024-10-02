@@ -32,7 +32,7 @@ export default function Component() {
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col items-center justify-center">
       <nav className="flex items-center justify-between p-4 border-b w-full">
-        <h1 className="text-2xl font-thin ml-2">Daccy</h1>
+      <h1 className="text-2xl"><Link href="/">Daccy</Link></h1>
         <Button
           variant="ghost"
           size="icon"
