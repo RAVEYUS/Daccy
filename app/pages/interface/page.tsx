@@ -48,7 +48,7 @@ export default function Component() {
       </nav>
       <main className="container mx-auto p-4 flex flex-col items-center justify-center flex-grow">
         <motion.div
-          className="grid grid-cols-1 md:grid-cols-3 gap-6"
+          className="grid grid-cols-1 md:grid-cols-2 gap-6"
           initial="hidden"
           animate="visible"
           variants={cardVariants}
@@ -56,7 +56,8 @@ export default function Component() {
           {[
             { title: "AI Chatbot", description: "Interact with an AI-powered chatbot", link: "/chatbot", buttonText: "Start Chatting" },
             { title: "Problem Puzzles", description: "Challenge yourself with AI-generated puzzles", link: "/puzzles", buttonText: "Try a Puzzle" },
-            { title: "Generative Learning", description: "Personalized AI-driven learning experiences", link: "/learning", buttonText: "Start Learning" }
+            { title: "Generative Learning", description: "Personalized AI-driven learning experiences", link: "/learning", buttonText: "Start Learning" },
+            { title: "Challenge Yourself", description: "Generate code according to your level and debug", link: "/pages/code", buttonText: "Start Debugging" }
           ].map((item, index) => (
             <motion.div
               key={index}

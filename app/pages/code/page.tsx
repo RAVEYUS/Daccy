@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { ChevronRight, BookOpen, Code, MessageSquare, Moon, Sun, BugIcon, GhostIcon, LightbulbIcon } from 'lucide-react';
+import { ChevronRight, BookOpen, Code, MessageSquare, Moon, Sun, BugIcon, GhostIcon, LightbulbIcon, MessageCircleIcon } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -170,19 +170,19 @@ export default function AIDebugChallenge() {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-              <p>{problemtitle || 'Generate a buggy code to get a problem title!'}</p>
+                <p>{problemtitle || 'Generate a buggy code to get a problem title!'}</p>
               </CardContent>
             </Card>
 
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center">
-                  <LightbulbIcon className="mr-2 h-5 w-5" />
-                  Suggestion
+                  <MessageCircleIcon className="mr-2 h-5 w-5" />
+                  Problem Description
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <p>{suggestion || 'Generate a buggy code to get a suggestion!'}</p>
+                <p>{suggestion || ''}</p>
               </CardContent>
             </Card>
 
