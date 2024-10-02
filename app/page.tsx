@@ -174,9 +174,9 @@ export default function LandingPage() {
         </motion.div>
       </main>
 
-      <footer className="bg-muted py-8">
-        <div className="container mx-auto px-6 text-center text-muted-foreground">
-          <p>&copy; 2024 DSA Companion. All rights reserved.</p>
+      <footer className="bg-background py-8">
+        <div className="mx-auto px-6 text-center text-muted-foreground">
+          <p>&copy; Daccy. All rights reserved.</p>
         </div>
       </footer>
     </div>

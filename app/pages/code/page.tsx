@@ -100,7 +100,7 @@ export default function AIDebugChallenge() {
             </Button>
           </motion.div>
           <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-            <Button><Link href="/">Back to Home</Link></Button>
+            <Button><Link href="/pages/interface">Back to Home</Link></Button>
           </motion.div>
         </nav>
       </header>
@@ -215,6 +215,11 @@ export default function AIDebugChallenge() {
           </div>
         </div>
       </main>
+      <footer className="bg-background py-8">
+                <div className="mx-auto px-6 text-center text-muted-foreground">
+                    <p>&copy; Daccy. All rights reserved.</p>
+                </div>
+            </footer>
     </div>
   );
 }
