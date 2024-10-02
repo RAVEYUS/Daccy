@@ -29,8 +29,8 @@ export async function POST(req: NextRequest) {
     const buggyCode = result.response.text(); // Adjust this based on actual response structure
 
     // Prepare hints and title prompts
-    const hintPrompt = `Generate 2 friendly hints (max 20 chars each) for the following code:\n${buggyCode}. Each hint should be on a new line, with no unnecessary text:, dont give hints that will solve the problem`;
-    const problemTitlePrompt = `Generate the problem title for ${buggyCode} , with no unnecessary text `;
+    const hintPrompt = `Please provide a clear and concise explanation of the following code. The explanation should include a brief overview of the program's functionality, a breakdown of each key component and its purpose, and an outline of the input/output behavior. Aim for clarity and precision, ensuring that the description is easy to understand for someone with a basic understanding of C++. The total length should not exceed 500 characters, and please avoid unnecessary text and special characters. Here is the code:\n${buggyCode}`;
+    const problemTitlePrompt = `Generate the problem title for ${buggyCode} , with no unnecessary text and special  characters: `;
 
     // Run hint and title generation concurrently
     const [hintResult, problemTitleResult] = await Promise.all([
