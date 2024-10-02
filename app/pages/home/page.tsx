@@ -8,6 +8,7 @@ import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/ca
 import { Input } from "@/components/ui/input"
 import { Inter } from 'next/font/google'
 import { useTheme } from "next-themes"
+import Link from 'next/link'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -77,7 +78,7 @@ export default function LandingPage() {
             {/* <Button variant="ghost">Try Beta</Button> */}
           </motion.div>
           <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-            <Button>Try Beta</Button>
+            <Button><Link href="/pages/code">Try Beta</Link></Button>
           </motion.div>
         </nav>
       </header>
