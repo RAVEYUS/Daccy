@@ -78,7 +78,7 @@ export default function LandingPage() {
             {/* <Button variant="ghost">Try Beta</Button> */}
           </motion.div>
           <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-            <Button><Link href="/pages/code">Try Beta</Link></Button>
+            <Button><Link href="/pages/interface">Try Beta</Link></Button>
           </motion.div>
         </nav>
       </header>
