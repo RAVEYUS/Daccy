@@ -49,6 +49,7 @@ export default function AIDebugChallenge() {
     setError(null);
     setBuggyCode(''); // Clear previous buggy code
     setSuggestion('');
+    setProblemTitle('');
 
     try {
       const response = await fetch('/api/generate-buggy-code', {
