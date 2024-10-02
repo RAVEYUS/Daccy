@@ -55,7 +55,7 @@ export default function Component() {
         >
           {[
             { title: "AI Chatbot", description: "Interact with an AI-powered chatbot", link: "/chatbot", buttonText: "Start Chatting" },
-            { title: "Problem Puzzles", description: "Challenge yourself with AI-generated puzzles", link: "/puzzles", buttonText: "Try a Puzzle" },
+            { title: "Problem Puzzles", description: "Challenge yourself with AI-generated puzzles", link: "/pages/puzzles", buttonText: "Try a Puzzle" },
             { title: "Generative Learning", description: "Personalized AI-driven learning experiences", link: "/learning", buttonText: "Start Learning" }
           ].map((item, index) => (
             <motion.div
@@ -66,8 +66,7 @@ export default function Component() {
                 borderColor: theme === "dark" ? "#fff" : "#000",
                 borderWidth: "1px",
               }}
-              className="rounded-lg overflow-hidden transition-all"
-              // Increased default size
+              className="rounded-lg overflow-hidden"
             >
               <Card>
                 <CardHeader>
