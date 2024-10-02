@@ -48,7 +48,7 @@ export default function Component() {
     return (
         <div className="min-h-screen bg-background text-foreground flex flex-col">
             <header className="flex items-center justify-between p-4 border-b w-full">
-                <h1 className="text-2xl font-thin">Daccy</h1>
+            <h1 className="text-2xl"><Link href="/">Daccy</Link></h1>
                 <div className="flex items-center gap-4">
                     <Button
                         variant="ghost"
@@ -63,7 +63,7 @@ export default function Component() {
                         <span className="sr-only">Toggle theme</span>
                     </Button>
                     <Link href="/pages/interface">
-                        <Button>Back to Home</Button>
+                        <Button>Back</Button>
                     </Link>
                 </div>
             </header>

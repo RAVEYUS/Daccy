@@ -92,7 +92,7 @@ export default function AIDebugChallenge() {
   return (
     <div className={`min-h-screen bg-background text-foreground ${inter.className}`}>
       <header className="p-6 ml-4 flex justify-between items-center">
-      <h1 className="text-2xl"><Link href="/">Daccy</Link></h1>
+        <h1 className="text-2xl"><Link href="/">Daccy</Link></h1>
         <nav className="flex items-center gap-4">
           <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
             <Button variant="ghost" onClick={toggleTheme} aria-label="Toggle theme">
@@ -100,7 +100,7 @@ export default function AIDebugChallenge() {
             </Button>
           </motion.div>
           <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-            <Button><Link href="/pages/interface">Back to Home</Link></Button>
+            <Button><Link href="/pages/interface">Back</Link></Button>
           </motion.div>
         </nav>
       </header>
@@ -216,10 +216,10 @@ export default function AIDebugChallenge() {
         </div>
       </main>
       <footer className="bg-background py-8">
-                <div className="mx-auto px-6 text-center text-muted-foreground">
-                    <p>&copy; Daccy. All rights reserved.</p>
-                </div>
-            </footer>
+        <div className="mx-auto px-6 text-center text-muted-foreground">
+          <p>&copy; Daccy. All rights reserved.</p>
+        </div>
+      </footer>
     </div>
   );
 }
