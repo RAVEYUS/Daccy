@@ -54,8 +54,8 @@ export default function Component() {
           variants={cardVariants}
         >
           {[
-            { title: "AI Chatbot", description: "Interact with an AI-powered chatbot", link: "/chatbot", buttonText: "Start Chatting" },
-            { title: "Problem Puzzles", description: "Challenge yourself with AI-generated puzzles", link: "/puzzles", buttonText: "Try a Puzzle" },
+            { title: "AI Chatbot", description: "Interact with an AI-powered chatbot", link: "/pages/chatbot", buttonText: "Start Chatting" },
+            { title: "Problem Puzzles", description: "Challenge yourself with AI-generated puzzles", link: "/pages/puzzles", buttonText: "Try a Puzzle" },
             { title: "Generative Learning", description: "Personalized AI-driven learning experiences", link: "/learning", buttonText: "Start Learning" },
             { title: "Challenge Yourself", description: "Generate code according to your level and debug", link: "/pages/code", buttonText: "Start Debugging" }
           ].map((item, index) => (
