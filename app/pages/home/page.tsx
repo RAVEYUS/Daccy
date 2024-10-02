@@ -1,10 +1,9 @@
 "use client"
-import { useState, useEffect } from 'react'
+import { useState, useEffect, FormEvent } from 'react'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { GithubIcon, CodeIcon, ZapIcon, AwardIcon, LinkedinIcon, TwitterIcon } from "lucide-react"
 import Link from "next/link"
-import { GlareCard } from '@/components/ui/glare-card'
 import FeatureCard from '@/components/ui/FeatureCard'
 
 export default function PacmanLandingPage() {
@@ -17,6 +16,35 @@ export default function PacmanLandingPage() {
     return () => clearInterval(interval)
   }, [])
 
+  const [result, setResult] = useState<string>("");
+
+  const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setResult("Sending...");
+
+    const formData = new FormData(event.currentTarget);
+    formData.append("access_key", "524ecc0c-e8cc-4679-bb4a-d46740a2bbad"); // Replace with your actual access key
+
+    try {
+      const response = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setResult("thanks for joining");
+        event.currentTarget.reset(); // Reset the form fields
+      } else {
+        console.error("Error", data);
+        setResult(data.message); // Display error message if form submission fails
+      }
+    } catch (error) {
+
+    }
+  };
+  
   return (
     <div className="min-h-screen bg-black text-white flex flex-col relative">
       <style jsx global>{`
@@ -136,21 +164,24 @@ export default function PacmanLandingPage() {
       <section id="signup" className="py-20 bg-gray-950 bg-opacity-80 relative z-10">
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-3xl mb-6 text-yellow-400 font-bold">Join the Beta</h2>
-          <form className="flex flex-col sm:flex-row gap-4 justify-center max-w-md mx-auto">
-            <Input
-              type="email"
-              placeholder="Enter your email"
-              className="bg-gray-800 text-white border-yellow-400"
-            />
-            <Button
-              type="submit"
-              className="bg-blue-500 hover:bg-blue-600 text-white font-bold transition-transform hover:scale-110"
-            >
-              Power Up!
-            </Button>
-          </form>
-        </div>
-      </section>
+        <form onSubmit={onSubmit} className="flex flex-col sm:flex-row gap-4 justify-center max-w-md mx-auto">
+          <input
+            type="email"
+            name="email"
+            placeholder="Enter your email"
+            required
+            className="bg-gray-800 text-white border border-yellow-400 py-2 px-4 rounded"
+          />
+          <button
+            type="submit"
+            className="bg-blue-500 p-2 rounded-xl hover:bg-blue-600 text-white font-bold transition-transform hover:scale-110"
+          >
+            Join
+          </button>
+        </form>
+        <span className="block mt-4 text-white">{result}</span> {/* Display result messages */}
+      </div>
+    </section>
 
       <footer className="bg-gray-950 py-12 px-4 relative z-10">
         <div className="container mx-auto">
