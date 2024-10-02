@@ -24,13 +24,13 @@ export async function POST(req: NextRequest) {
     const model = genai.getGenerativeModel({ model: "gemini-1.5-flash" });
 
     // Generate the buggy code and hints in parallel
-    const prompt = `Generate buggy code for a ${level} level problem in ${language}. Provide only the code, no comments or unnecessary text.`;
+    const prompt = `Generate a  buggy code which isnt easy to fix for a ${level} level problem in ${language} and dont provide solution and  dont give uncessary text other than code and remove all comments and indentation and your gemini thankful response text.`;
     const result = await model.generateContent(prompt);
     const buggyCode = result.response.text(); // Adjust this based on actual response structure
 
     // Prepare hints and title prompts
-    const hintPrompt = `Generate 2 hints (max 15 chars each) for the following code:\n${buggyCode}. Each hint should be on a new line, with no unnecessary text:`;
-    const problemTitlePrompt = `Generate the problem title for the following buggy code:\n${buggyCode}`;
+    const hintPrompt = `Generate 2 friendly hints (max 20 chars each) for the following code:\n${buggyCode}. Each hint should be on a new line, with no unnecessary text:, dont give hints that will solve the problem`;
+    const problemTitlePrompt = `Generate the problem title for ${buggyCode} , with no unnecessary text `;
 
     // Run hint and title generation concurrently
     const [hintResult, problemTitleResult] = await Promise.all([
