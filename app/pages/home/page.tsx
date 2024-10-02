@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, FormEvent } from 'react'
 import { motion } from 'framer-motion'
 import { ChevronRight, BookOpen, Code, MessageSquare, Moon, Sun } from 'lucide-react'
 import { Button } from "@/components/ui/button"
@@ -20,6 +20,36 @@ export default function LandingPage() {
     setMounted(true)
     setTheme('dark')
   }, [setTheme])
+
+  const [result, setResult] = useState<string>("");
+  const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setResult("Sending...");
+
+    const formData = new FormData(event.currentTarget);
+    formData.append("access_key", "524ecc0c-e8cc-4679-bb4a-d46740a2bbad"); // Replace with your actual access key
+
+    try {
+      const response = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setResult("thanks for joining");
+        setEmail(''); // Reset the email state
+        event.currentTarget.reset(); // Reset the form fields
+      } else {
+        console.error("Error", data);
+        setResult(data.message); // Display error message if form submission fails
+      }
+    } catch (error) {
+      console.error("Error submitting the form", error);
+      setResult("An error occurred. Please try again."); // Handle fetch error
+    }
+  };
 
   const features = [
     { icon: BookOpen, title: 'Comprehensive DSA Topics', description: 'Learn everything from basic arrays to advanced graph algorithms.' },
@@ -44,10 +74,10 @@ export default function LandingPage() {
             </Button>
           </motion.div>
           <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-            <Button variant="ghost">Login</Button>
+            {/* <Button variant="ghost">Try Beta</Button> */}
           </motion.div>
           <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-            <Button>Sign Up</Button>
+            <Button>Try Beta</Button>
           </motion.div>
         </nav>
       </header>
@@ -73,19 +103,17 @@ export default function LandingPage() {
 
         {/* New "Try the Beta" button */}
         {/* New "Try the Beta" button */}
-        <Button
+        {/* <Button
           variant="outline"
           className="border-primary mb-11 text-primary transition-transform duration-200 hover:scale-105 active:scale-95"
         >
           Try the Beta
-        </Button>
+        </Button> */}
 
 
-        <motion.div
+        <form
+          onSubmit={onSubmit}
           className="flex flex-col sm:flex-row justify-center items-center gap-4 mb-12"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.6 }}
         >
           <Input
             type="email"
@@ -93,14 +121,16 @@ export default function LandingPage() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             className="w-full sm:w-auto"
+            required
           />
+
           <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-            <Button size="lg">
+            <Button size="lg" type="submit">
               Get Started
               <ChevronRight className="ml-2 h-4 w-4" />
             </Button>
           </motion.div>
-        </motion.div>
+        </form>
 
         <div className="flex flex-wrap gap-6 mb-12 justify-between">
           {features.map((feature, index) => (
