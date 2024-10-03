@@ -25,6 +25,7 @@ export default function LandingPage() {
   const [result, setResult] = useState<string>("");
   const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    console.log(result)
     setResult("Sending...");
 
     const formData = new FormData(event.currentTarget);

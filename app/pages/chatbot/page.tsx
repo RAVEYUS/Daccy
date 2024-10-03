@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Moon, Sun, Send, Bot, User, Sparkles, History, MessageSquare, X } from "lucide-react";
+import { Moon, Sun, Send, Bot, User, History, MessageSquare, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useTheme } from "next-themes";
@@ -28,10 +28,10 @@ export default function ChatComponent() {
   ]);
   const [inputMessage, setInputMessage] = useState("");
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  const [chatHistory, setChatHistory] = useState<ChatHistory[]>([
+  const chatHistory = [
     { id: 1, title: "Previous Chat 1" },
     { id: 2, title: "Previous Chat 2" },
-  ]);
+  ];
 
   const suggestions = [
     "How does AI work?",
