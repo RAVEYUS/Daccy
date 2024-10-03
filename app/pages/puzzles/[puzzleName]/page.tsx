@@ -39,7 +39,7 @@ console.log(isPalindrome("12321"));`)
       // Capture console.log output
       let output = ''
       const mockConsole = {
-        log: (...args) => {
+        log: (...args :any[]) => {
           output += args.join(' ') + '\n'
         }
       }
@@ -49,7 +49,13 @@ console.log(isPalindrome("12321"));`)
       
       setOutput(output)
     } catch (error) {
-      setOutput(`Error: ${error.message}`)
+      if (error instanceof Error) {
+        // Safely access the message property
+        setOutput(`Error: ${error.message}`);
+      } else {
+        // Handle unknown error type
+        setOutput('An unknown error occurred.');
+      }
     }
   }
 
