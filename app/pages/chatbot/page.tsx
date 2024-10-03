@@ -53,7 +53,6 @@ export default function ChatComponent() {
       ...messages,
       { content: inputMessage, sender: "user" },
     ];
-    setMessages(newMessages);
     setInputMessage("");
 
     // Call the backend to get the AI response
@@ -71,10 +70,6 @@ export default function ChatComponent() {
       }
 
       const data = await response.json();
-      setMessages([
-        ...newMessages,
-        { content: data.reply, sender: "bot" },
-      ]);
     } catch (error) {
       console.error("Error:", error);
       // You may want to add error handling here
