@@ -1,13 +1,24 @@
-'use client';
+'use client'
 
 import { useState, useEffect } from 'react';
-import { Button } from "@/components/ui/button"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { BugIcon, CodeIcon, GhostIcon, LightbulbIcon } from "lucide-react"
-import Editor from "@monaco-editor/react"
+import { motion } from 'framer-motion';
+import { ChevronRight, BookOpen, Code, MessageSquare, Moon, Sun, BugIcon, GhostIcon, LightbulbIcon, MessageCircleIcon } from 'lucide-react';
+import { Button } from "@/components/ui/button";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Inter } from 'next/font/google';
+import { useTheme } from "next-themes";
+import Link from 'next/link';
+import Editor from "@monaco-editor/react";
+import React from 'react';
 
-export default function GenerateAndCheckBuggyCodePage() {
+const inter = Inter({ subsets: ['latin'] });
+
+export default function AIDebugChallenge() {
+  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+  const [problemtitle, setProblemTitle] = useState<string>('');
   const [level, setLevel] = useState<string>('');
   const [language, setLanguage] = useState<string>('');
   const [buggyCode, setBuggyCode] = useState<string>('');
@@ -15,6 +26,11 @@ export default function GenerateAndCheckBuggyCodePage() {
   const [error, setError] = useState<string | null>(null);
   const [dotCount, setDotCount] = useState(0);
   const [suggestion, setSuggestion] = useState<string>('');
+
+  useEffect(() => {
+    setMounted(true);
+    setTheme('dark');
+  }, [setTheme]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -25,12 +41,15 @@ export default function GenerateAndCheckBuggyCodePage() {
 
   const handleGenerate = async () => {
     if (!level || !language) {
-      setError('Please select both level and language.');
+      setError('Please select both difficulty level and programming language.');
       return;
     }
 
     setLoading(true);
     setError(null);
+    setBuggyCode(''); // Clear previous buggy code
+    setSuggestion('');
+    setProblemTitle('');
 
     try {
       const response = await fetch('/api/generate-buggy-code', {
@@ -47,8 +66,9 @@ export default function GenerateAndCheckBuggyCodePage() {
       }
 
       const data = await response.json();
-      setBuggyCode(data.buggyCode);
-      setSuggestion(data.suggestion || 'Try to identify and fix the bug in the code!');
+      setBuggyCode(data.code); // Assuming the API returns 'code' as buggy code
+      setSuggestion(data.hint || 'Try to identify and fix the bug in the code!'); // Assuming the API returns 'hint'
+      setProblemTitle(data.problemTitleText);
     } catch (err) {
       console.error('Detailed error:', err);
       setError('An error occurred while generating the buggy code. Please try again.');
@@ -57,68 +77,66 @@ export default function GenerateAndCheckBuggyCodePage() {
     }
   };
 
+  const features = [
+    { icon: BookOpen, title: 'Comprehensive DSA Topics', description: 'Learn everything from basic arrays to advanced graph algorithms.' },
+    { icon: Code, title: 'Interactive Coding Challenges', description: 'Practice your skills with our real-time coding environment.' },
+    { icon: MessageSquare, title: 'AI-Powered Assistance', description: 'Get personalized help and explanations from our AI tutor.' },
+  ];
+
+  const toggleTheme = () => {
+    setTheme(theme === 'dark' ? 'light' : 'dark');
+  };
+
+  if (!mounted) return null;
+
   return (
-    <div className="min-h-screen bg-black text-white flex flex-col relative">
-      <style jsx global>{`
-        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
-        body {
-          font-family: 'Press Start 2P', cursive;
-        }
-        .bug-bg {
-          background-image: 
-            radial-gradient(circle, #ff0000 3px, transparent 4px),
-            radial-gradient(circle, #ff0000 3px, transparent 4px);
-          background-size: 60px 60px;
-          background-position: 0 0, 30px 30px;
-          animation: moveBugs 4s linear infinite;
-        }
-        @keyframes moveBugs {
-          0% { background-position: 0 0, 30px 30px; }
-          100% { background-position: 60px 60px, 90px 90px; }
-        }
-        .pixel-border {
-          box-shadow: 
-            0 0 0 2px #000,
-            0 0 0 4px #ff0000;
-        }
-      `}</style>
-      
-      <div className="bug-bg absolute inset-0 opacity-10"></div>
-      
-      <div className="container mx-auto p-4 relative z-10">
-        <h1 className="text-4xl font-bold mb-6 text-center text-black rounded-xl p-4 bg-yellow-400">Debug Challenge</h1>
-        
-        <div className="flex flex-col md:flex-row gap-6">
+    <div className={`min-h-screen bg-background text-foreground ${inter.className}`}>
+      <header className="p-6 ml-4 flex justify-between items-center">
+        <h1 className="text-2xl"><Link href="/">Daccy</Link></h1>
+        <nav className="flex items-center gap-4">
+          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+            <Button variant="ghost" onClick={toggleTheme} aria-label="Toggle theme">
+              {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+            </Button>
+          </motion.div>
+          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+            <Button><Link href="/pages/interface">Back</Link></Button>
+          </motion.div>
+        </nav>
+      </header>
+
+      <main className="container mx-auto px-6 py-12">
+        <div className="flex flex-col md:flex-row gap-6 mb-12">
           <div className="md:w-1/3 space-y-6">
-            <Card className="bg-gray-900 ">
+            <Card>
               <CardHeader>
-                <CardTitle className="text-yellow-400 flex items-center">
+                <CardTitle className="flex items-center">
                   <GhostIcon className="mr-2 h-5 w-5" />
                   Choose Your Challenge
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
-                  <label htmlFor="level" className="block mb-2 text-sm font-medium text-blue-400">Select Difficulty:</label>
-                  <Select value={level} onValueChange={setLevel}>
-                    <SelectTrigger id="level" className="bg-gray-800 text-white border-red-500">
+                  <label htmlFor="level" className="block mb-2 text-sm font-medium">Select Difficulty:</label>
+                  <Select value={level} onValueChange={setLevel} aria-label="Select Difficulty">
+                    <SelectTrigger id="level">
                       <SelectValue placeholder="Select Level" />
                     </SelectTrigger>
-                    <SelectContent className="bg-gray-800 text-white">
+                    <SelectContent>
                       <SelectItem value="beginner">Beginner</SelectItem>
                       <SelectItem value="intermediate">Intermediate</SelectItem>
                       <SelectItem value="master">Master</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
-                
+
                 <div>
-                  <label htmlFor="language" className="block mb-2 text-sm font-medium text-blue-400">Select Language:</label>
-                  <Select value={language} onValueChange={setLanguage}>
-                    <SelectTrigger id="language" className="bg-gray-800 text-white border-red-500">
+                  <label htmlFor="language" className="block mb-2 text-sm font-medium">Select Language:</label>
+                  <Select value={language} onValueChange={setLanguage} aria-label="Select Language">
+                    <SelectTrigger id="language">
                       <SelectValue placeholder="Select Language" />
                     </SelectTrigger>
-                    <SelectContent className="bg-gray-800 text-white">
+                    <SelectContent>
                       <SelectItem value="python">Python</SelectItem>
                       <SelectItem value="c">C</SelectItem>
                       <SelectItem value="cpp">C++</SelectItem>
@@ -126,10 +144,10 @@ export default function GenerateAndCheckBuggyCodePage() {
                     </SelectContent>
                   </Select>
                 </div>
-                
+
                 <Button
                   onClick={handleGenerate}
-                  className="w-full bg-red-500 hover:bg-red-600 text-white px-8 py-3 rounded-full text-lg transition-transform "
+                  className="w-full"
                   disabled={loading}
                 >
                   {loading ? (
@@ -144,46 +162,64 @@ export default function GenerateAndCheckBuggyCodePage() {
               </CardContent>
             </Card>
 
-            <Card className="bg-gray-900  ">
+            <Card>
               <CardHeader>
-                <CardTitle className="text-yellow-400 flex items-center">
+                <CardTitle className="flex items-center">
                   <LightbulbIcon className="mr-2 h-5 w-5" />
-                  Suggestion
+                  Problem Title
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-white">{suggestion || 'Generate a buggy code to get a suggestion!'}</p>
+                <p>{problemtitle || 'Generate a buggy code to get a problem title!'}</p>
               </CardContent>
             </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <MessageCircleIcon className="mr-2 h-5 w-5" />
+                  Problem Description
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p>{suggestion || ''}</p>
+              </CardContent>
+            </Card>
+
           </div>
 
           <div className="md:w-2/3 space-y-6">
             {error && (
-              <Card className="bg-gray-900 border-yellow-500 pixel-border">
+              <Card>
                 <CardContent>
-                  <p className="text-yellow-500">{error}</p>
+                  <p className="text-red-500">{error}</p>
                 </CardContent>
               </Card>
             )}
 
             {buggyCode && (
-              <Card className="bg-gray-900">
+              <Card>
                 <CardHeader>
-                  <CardTitle className="flex items-center text-green-400">
-                    <CodeIcon className="mr-2 h-5 w-5" />
+                  <CardTitle className="flex items-center">
+                    <Code className="mr-2 h-5 w-5" />
                     Buggy Code Generated
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="bg-gray-800 p-4 rounded-md overflow-x-auto text-green-300">
-                    <Editor height="60vh" theme='vs-dark' language={language} value={buggyCode}></Editor>
+                  <div className="bg-muted p-4 rounded-md overflow-x-auto">
+                    <Editor height="60vh" theme={theme === 'dark' ? 'vs-dark' : 'light'} language={language} value={buggyCode} />
                   </div>
                 </CardContent>
               </Card>
             )}
           </div>
         </div>
-      </div>
+      </main>
+      <footer className="bg-background py-8">
+        <div className="mx-auto px-6 text-center text-muted-foreground">
+          <p>&copy; Daccy. All rights reserved.</p>
+        </div>
+      </footer>
     </div>
   );
 }
