@@ -61,7 +61,7 @@ GEMINI_API_KEY=
 
 Start the development server:
 ```bash
-npm start
+npm run dev
 ```
 
 ## Contributing
