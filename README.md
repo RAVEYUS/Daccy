@@ -22,16 +22,16 @@ We faced inconsistencies with the Gemini AI model's content generation. To overc
 
 ## Tech Stack
 
-- **Frontend**: React
+- **Frontend**: Nextjs
 - **Backend**: Node.js, Express.js
-- **Database**: PostgreSQL
+- **Database**: Prism ORM
 - **AI**: Gemini AI
 
 ## Getting Started
 
 ### Prerequisites
 
-- Node.js
+- Prisma
 - PostgreSQL
 
 ### Installation
