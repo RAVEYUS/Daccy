@@ -69,14 +69,6 @@ const LearningInterfaceComponent=()=> {
       <NavbarComponent />
 
       <main className="container mx-auto px-6 py-12">
-        <motion.h2
-          className="text-4xl md:text-5xl pb-2 mb-4 bg-gradient-to-b from-white to-gray-500 bg-clip-text text-transparent text-center"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-        >
-          Daccy Learn: Master DSA
-        </motion.h2>
 
         <div className="flex gap-6 mt-8">
           {/* Left sidebar */}
@@ -174,11 +166,7 @@ const LearningInterfaceComponent=()=> {
         </div>
       </main>
 
-      <footer className="bg-background py-8">
-        <div className="mx-auto px-6 text-center text-muted-foreground">
-          <p>&copy; {new Date().getFullYear()} Daccy. All rights reserved.</p>
-        </div>
-      </footer>
+      
     </div>
   )
 }
