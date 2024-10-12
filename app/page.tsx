@@ -1,19 +1,18 @@
 "use client"
 
-import { useState, useEffect, FormEvent } from 'react'
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { ChevronRight, BookOpen, Code, MessageSquare, Moon, Sun } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Inter } from 'next/font/google'
 import { useTheme } from "next-themes"
 import Link from 'next/link'
+import { Inter } from 'next/font/google'
+import { SignedIn, SignedOut, SignInButton, UserButton } from '@clerk/nextjs' // Import Clerk components
 
 const inter = Inter({ subsets: ['latin'] })
 
 export default function LandingPage() {
-  const [email, setEmail] = useState('')
   const { theme, setTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
 
@@ -21,37 +20,6 @@ export default function LandingPage() {
     setMounted(true)
     setTheme('dark')
   }, [setTheme])
-
-  const [result, setResult] = useState<string>("");
-  const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    console.log(result)
-    setResult("Sending...");
-
-    const formData = new FormData(event.currentTarget);
-    formData.append("access_key", "524ecc0c-e8cc-4679-bb4a-d46740a2bbad"); // Replace with your actual access key
-
-    try {
-      const response = await fetch("https://api.web3forms.com/submit", {
-        method: "POST",
-        body: formData,
-      });
-
-      const data = await response.json();
-
-      if (data.success) {
-        setResult("thanks for joining");
-        setEmail(''); // Reset the email state
-        event.currentTarget.reset(); // Reset the form fields
-      } else {
-        console.error("Error", data);
-        setResult(data.message); // Display error message if form submission fails
-      }
-    } catch (error) {
-      console.error("Error submitting the form", error);
-      setResult("An error occurred. Please try again."); // Handle fetch error
-    }
-  };
 
   const features = [
     { icon: BookOpen, title: 'Comprehensive DSA Topics', description: 'Learn everything from basic arrays to advanced graph algorithms.' },
@@ -75,12 +43,16 @@ export default function LandingPage() {
               {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
             </Button>
           </motion.div>
-          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-            {/* <Button variant="ghost">Try Beta</Button> */}
-          </motion.div>
-          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-            <Button><Link href="/pages/interface">Try Beta</Link></Button>
-          </motion.div>
+          <SignedOut>
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <SignInButton>
+                <Button>Login / Signup</Button>
+              </SignInButton>
+            </motion.div>
+          </SignedOut>
+          <SignedIn>
+            <UserButton />
+          </SignedIn>
         </nav>
       </header>
 
@@ -103,36 +75,16 @@ export default function LandingPage() {
           Learn, practice, and excel with our AI-powered learning companion
         </motion.p>
 
-        {/* New "Try the Beta" button */}
-        {/* New "Try the Beta" button */}
-        {/* <Button
-          variant="outline"
-          className="border-primary mb-11 text-primary transition-transform duration-200 hover:scale-105 active:scale-95"
+        <motion.div 
+          whileHover={{ scale: 1.05 }} 
+          whileTap={{ scale: 0.95 }}
+          className="mb-12"
         >
-          Try the Beta
-        </Button> */}
-
-
-        <form
-          onSubmit={onSubmit}
-          className="flex flex-col sm:flex-row justify-center items-center gap-4 mb-12"
-        >
-          <Input
-            type="email"
-            placeholder="Enter your email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full sm:w-auto"
-            required
-          />
-
-          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-            <Button size="lg" type="submit">
-              Get Started
-              <ChevronRight className="ml-2 h-4 w-4" />
-            </Button>
-          </motion.div>
-        </form>
+          <Button size="lg">
+            <Link href="/pages/interface">Get Started</Link>
+            <ChevronRight className="ml-2 h-4 w-4" />
+          </Button>
+        </motion.div>
 
         <div className="flex flex-wrap gap-6 mb-12 justify-between">
           {features.map((feature, index) => (
@@ -169,7 +121,7 @@ export default function LandingPage() {
           <h3 className="text-2xl font-extralight mb-4">Start Your DSA Journey Today</h3>
           <p className="text-muted-foreground mb-6">Join thousands of learners who have improved their coding skills with our platform</p>
           <Button size="lg" variant="default">
-            Explore Topics
+            <Link href="/pages/interface">Explore Topics</Link>
             <ChevronRight className="ml-2 h-4 w-4" />
           </Button>
         </motion.div>
