@@ -21,11 +21,15 @@ export async function POST(request: Request) {
     }
 
     // Generate content using the Gemini AI model
-    const prompt = message; // You can modify this if needed
-    const result = await model.generateContent(prompt);
+    const result = await model.generateContent(message);
+
+    // Ensure that the response has the expected structure
+    if (!result || !result.response || !result.response.text) {
+      throw new Error("Invalid response structure from the Generative AI model");
+    }
 
     // Extract the response text
-    const reply = result.response.text(); // Adjust this based on actual response structure
+    const reply = result.response.text(); // Ensure this aligns with the actual response structure
 
     return NextResponse.json({ reply });
 

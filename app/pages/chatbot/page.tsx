@@ -1,43 +1,50 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Moon, Sun, Send, Bot, User, History, MessageSquare, X } from "lucide-react";
+import { Moon, Sun, Send, GraduationCap, BookOpen, X, Search, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useTheme } from "next-themes";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { motion, AnimatePresence } from "framer-motion";
 import { Separator } from "@/components/ui/separator";
-import Link from "next/link"; // Import Link from next/link
+import Link from "next/link";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 
 interface Message {
   content: string;
-  sender: "user" | "bot";
+  sender: "user" | "assistant";
 }
 
-interface ChatHistory {
+interface LearningTopic {
   id: number;
   title: string;
+  description: string;
 }
 
-export default function ChatComponent() {
+export default function LearningAssistantComponent() {
   const { setTheme, theme } = useTheme();
   const [mounted, setMounted] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
-    { content: "Hello! How can I assist you today?", sender: "bot" },
+    { content: "Welcome to Daccy Learn! What would you like to explore today?", sender: "assistant" },
   ]);
   const [inputMessage, setInputMessage] = useState("");
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  const chatHistory = [
-    { id: 1, title: "Previous Chat 1" },
-    { id: 2, title: "Previous Chat 2" },
+  const [isLoading, setIsLoading] = useState(false);
+  const [selectedTopic, setSelectedTopic] = useState<LearningTopic | null>(null);
+
+  const learningTopics: LearningTopic[] = [
+    { id: 1, title: "Programming Basics", description: "Learn the fundamentals of programming, including variables, data types, and control structures." },
+    { id: 2, title: "Data Structures", description: "Explore essential data structures like arrays, linked lists, trees, and graphs." },
+    { id: 3, title: "Web Development", description: "Discover the basics of HTML, CSS, and JavaScript for building web applications." },
+    { id: 4, title: "Machine Learning", description: "Introduction to machine learning concepts and algorithms." },
   ];
 
   const suggestions = [
-    "How does AI work?",
-    "Tell me about machine learning",
-    "Explain neural networks",
-    "What are the applications of AI?",
+    "Explain variables and data types",
+    "How do loops work in programming?",
+    "What are the basics of HTML and CSS?",
+    "Introduce me to Python programming",
   ];
 
   useEffect(() => {
@@ -53,47 +60,39 @@ export default function ChatComponent() {
       ...messages,
       { content: inputMessage, sender: "user" },
     ];
+    setMessages(newMessages);
     setInputMessage("");
+    setIsLoading(true);
 
-    // Call the backend to get the AI response
     try {
-      const response = await fetch("/api/chat", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ message: inputMessage }),
-      });
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      const assistantReply = `Here's some information about "${inputMessage}": [Simulated learning content]`;
 
-      if (!response.ok) {
-        throw new Error("Failed to fetch AI response");
-      }
-
-      const data = await response.json();
+      setMessages((prevMessages) => [
+        ...prevMessages,
+        { content: assistantReply, sender: "assistant" },
+      ]);
     } catch (error) {
       console.error("Error:", error);
-      // You may want to add error handling here
+      setMessages((prevMessages) => [
+        ...prevMessages,
+        { content: "Sorry, I couldn't retrieve the information at this moment. Please try again later.", sender: "assistant" },
+      ]);
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  // Page transition animation
   const pageVariants = {
     hidden: { opacity: 0, y: 50 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
   };
 
-  // Message animation (slide up and fade in)
   const messageVariants = {
     hidden: { opacity: 0, y: 20 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.3 } },
   };
 
-  // Button hover animation
-  const buttonVariants = {
-    hover: { scale: 1.05, transition: { duration: 0.2 } },
-  };
-
-  // Sidebar animation
   const sidebarVariants = {
     open: { x: 0, transition: { type: "spring", stiffness: 300, damping: 30 } },
     closed: { x: "-100%", transition: { type: "spring", stiffness: 300, damping: 30 } },
@@ -109,43 +108,29 @@ export default function ChatComponent() {
       <AnimatePresence>
         {isSidebarOpen && (
           <motion.div
-            className="w-64 border-r bg-background"
+            className="w-80 border-r bg-background"
             initial="closed"
             animate="open"
             exit="closed"
             variants={sidebarVariants}
           >
             <div className="p-4">
-              <h2 className="text-lg font-thin mb-4">Chat Suggestions</h2>
-              <ul className="space-y-2">
-                {suggestions.map((suggestion, index) => (
-                  <li key={index}>
-                    <Button
-                      variant="ghost"
-                      className="w-full justify-start text-left"
-                      onClick={() => setInputMessage(suggestion)}
+              <h2 className="text-2xl font-semibold mb-4">Learning Topics</h2>
+              <ScrollArea className="h-[calc(100vh-200px)]">
+                <div className="space-y-4">
+                  {learningTopics.map((topic) => (
+                    <Card 
+                      key={topic.id} 
+                      className="cursor-pointer hover:bg-accent"
+                      onClick={() => setSelectedTopic(topic)}
                     >
-                      <MessageSquare className="mr-2 h-4 w-4" />
-                      {suggestion}
-                    </Button>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <Separator />
-            <div className="p-4">
-              <h2 className="text-lg font-thin mb-4">Chat History</h2>
-              <ScrollArea className="h-[calc(100vh-300px)]">
-                <ul className="space-y-2">
-                  {chatHistory.map((chat) => (
-                    <li key={chat.id}>
-                      <Button variant="ghost" className="w-full justify-start text-left">
-                        <History className="mr-2 h-4 w-4" />
-                        {chat.title}
-                      </Button>
-                    </li>
+                      <CardHeader>
+                        <CardTitle>{topic.title}</CardTitle>
+                        <CardDescription>{topic.description}</CardDescription>
+                      </CardHeader>
+                    </Card>
                   ))}
-                </ul>
+                </div>
               </ScrollArea>
             </div>
           </motion.div>
@@ -161,15 +146,15 @@ export default function ChatComponent() {
               onClick={() => setIsSidebarOpen(!isSidebarOpen)}
               aria-label={isSidebarOpen ? "Close sidebar" : "Open sidebar"}
             >
-              {isSidebarOpen ? <X className="h-5 w-5" /> : <MessageSquare className="h-5 w-5" />}
+              {isSidebarOpen ? <X className="h-5 w-5" /> : <BookOpen className="h-5 w-5" />}
             </Button>
             <motion.h1
-              className="text-2xl font-sans flex items-center ml-2"
+              className="text-2xl font-bold flex items-center ml-2"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1, transition: { delay: 0.2, duration: 0.5 } }}
             >
-              <Bot className="mr-2 h-6 w-6" />
-              <h1 className="text-2xl"><Link href="/">Daccy</Link></h1>
+              <GraduationCap className="mr-2 h-6 w-6" />
+              <Link href="/">Daccy Learn</Link>
             </motion.h1>
           </div>
           <div className="flex items-center space-x-2">
@@ -179,75 +164,106 @@ export default function ChatComponent() {
               onClick={() => setTheme(theme === "light" ? "dark" : "light")}
               aria-label="Toggle theme"
             >
-              {theme === "light" ? (
-                <Moon className="h-5 w-5" />
-              ) : (
-                <Sun className="h-5 w-5" />
-              )}
+              {theme === "light" ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
             </Button>
             <Link href="/pages/interface">
               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                <Button>Back </Button>
+                <Button variant="outline">Back to Dashboard</Button>
               </motion.div>
             </Link>
           </div>
         </header>
-        <main className="flex-1 overflow-hidden">
-          <ScrollArea className="h-full p-4">
-            {messages.map((message, index) => (
-              <motion.div
-                key={index}
-                className={`flex ${message.sender === "user" ? "justify-end" : "justify-start"} mb-4`}
-                initial="hidden"
-                animate="visible"
-                variants={messageVariants}
-              >
-                <div
-                  className={`max-w-[80%] p-3 rounded-lg ${
-                    message.sender === "user"
-                      ? "bg-primary text-primary-foreground"
-                      : "bg-secondary text-secondary-foreground"
-                  }`}
-                >
-                  <div className="flex items-center mb-1">
-                    {message.sender === "user" ? (
-                      <User className="h-4 w-4 mr-2" />
-                    ) : (
-                      <Bot className="h-4 w-4 mr-2" />
-                    )}
-                    <span className="font-semibold">{message.sender === "user" ? "You" : "AI"}</span>
+
+        <main className="flex-1 overflow-hidden flex">
+          <div className="flex-1 overflow-y-auto p-4">
+            <ScrollArea className="h-full">
+              {selectedTopic ? (
+                <Card className="mb-4">
+                  <CardHeader>
+                    <CardTitle>{selectedTopic.title}</CardTitle>
+                    <CardDescription>{selectedTopic.description}</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <Button 
+                      onClick={() => setInputMessage(`Tell me more about ${selectedTopic.title}`)}
+                      className="mt-2"
+                    >
+                      Start Learning <ChevronRight className="ml-2 h-4 w-4" />
+                    </Button>
+                  </CardContent>
+                </Card>
+              ) : (
+                <Card className="mb-4">
+                  <CardHeader>
+                    <CardTitle>Welcome to Daccy Learn</CardTitle>
+                    <CardDescription>Select a topic from the sidebar to start learning, or ask a question below.</CardDescription>
+                  </CardHeader>
+                </Card>
+              )}
+              <div className="space-y-4">
+                {messages.map((msg, index) => (
+                  <motion.div
+                    key={index}
+                    variants={messageVariants}
+                    initial="hidden"
+                    animate="visible"
+                    className={`flex ${msg.sender === "user" ? "justify-end" : "justify-start"}`}
+                  >
+                    <div
+                      className={`p-3 rounded-lg max-w-[80%] ${
+                        msg.sender === "user" ? "bg-primary text-primary-foreground" : "bg-secondary text-secondary-foreground"
+                      }`}
+                    >
+                      {msg.content}
+                    </div>
+                  </motion.div>
+                ))}
+                {isLoading && (
+                  <div className="flex justify-start">
+                    <div className="p-3 rounded-lg bg-secondary text-secondary-foreground">
+                      Searching for information...
+                    </div>
                   </div>
-                  {message.content}
-                </div>
-              </motion.div>
-            ))}
-          </ScrollArea>
+                )}
+              </div>
+            </ScrollArea>
+          </div>
+          <div className="w-64 border-l p-4 hidden lg:block">
+            <h3 className="text-lg font-semibold mb-4">Learning Suggestions</h3>
+            <ScrollArea className="h-[calc(100vh-200px)]">
+              <ul className="space-y-2">
+                {suggestions.map((suggestion, index) => (
+                  <li key={index}>
+                    <Button
+                      variant="ghost"
+                      className="w-full justify-start text-left"
+                      onClick={() => setInputMessage(suggestion)}
+                    >
+                      <Search className="mr-2 h-4 w-4" />
+                      {suggestion}
+                    </Button>
+                  </li>
+                ))}
+              </ul>
+            </ScrollArea>
+          </div>
         </main>
+
         <footer className="p-4 border-t">
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              handleSendMessage();
-            }}
-            className="flex space-x-2"
-          >
+          <div className="flex items-center">
             <Input
+              className="flex-1"
+              placeholder="Ask a question or request a topic..."
               value={inputMessage}
               onChange={(e) => setInputMessage(e.target.value)}
-              placeholder="Type your message here..."
-              className="flex-1"
+              onKeyPress={(e) => {
+                if (e.key === "Enter") handleSendMessage();
+              }}
             />
-            <motion.button
-              type="submit"
-              className="flex items-center justify-center p-2 bg-primary text-primary-foreground rounded-full"
-              variants={buttonVariants}
-              whileHover="hover"
-            >
-              <Send className="h-4 w-4" />
-              <span className="sr-only">Send message</span>
-            </motion.button>
-          </form>
-          <Separator className="my-4" />
+            <Button className="ml-2" onClick={handleSendMessage}>
+              <Send className="h-5 w-5" />
+            </Button>
+          </div>
         </footer>
       </div>
     </motion.div>

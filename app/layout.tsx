@@ -1,22 +1,32 @@
-import type { Metadata } from "next";
-import localFont from "next/font/local";
-import "./globals.css";
-import { ThemeProvider } from "@/components/ui/themeprovider";
+import {
+  ClerkProvider,
+  SignInButton,
+  SignedIn,
+  SignedOut,
+  UserButton,
+} from '@clerk/nextjs';
+import type { Metadata } from 'next';
+import localFont from 'next/font/local';
+import './globals.css';
+import { ThemeProvider } from '@/components/ui/themeprovider';
 
+// Load local fonts
 const geistSans = localFont({
-  src: "./fonts/GeistVF.woff",
-  variable: "--font-geist-sans",
-  weight: "100 900",
-});
-const geistMono = localFont({
-  src: "./fonts/GeistMonoVF.woff",
-  variable: "--font-geist-mono",
-  weight: "100 900",
+  src: './fonts/GeistVF.woff',
+  variable: '--font-geist-sans',
+  weight: '100 900',
 });
 
+const geistMono = localFont({
+  src: './fonts/GeistMonoVF.woff',
+  variable: '--font-geist-mono',
+  weight: '100 900',
+});
+
+// Metadata for the page
 export const metadata: Metadata = {
-  title: "Daccy",
-  description: "Learn coding efficiently",
+  title: 'Daccy',
+  description: 'Learn coding efficiently',
 };
 
 export default function RootLayout({
@@ -25,11 +35,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        <ThemeProvider
+    <ClerkProvider>
+      <html lang="en">
+        <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+          <ThemeProvider
             attribute="class"
             defaultTheme="system"
             enableSystem
@@ -37,7 +46,8 @@ export default function RootLayout({
           >
             {children}
           </ThemeProvider>
-      </body>
-    </html>
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }
