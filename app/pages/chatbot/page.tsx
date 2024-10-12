@@ -12,6 +12,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { Inter } from 'next/font/google'
 import { SignedIn, SignedOut, SignInButton, UserButton } from '@clerk/nextjs'
+import { NavbarComponent } from '@/components/navbar'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -80,37 +81,7 @@ export default function ChatInterface() {
 
   return (
     <div className={`min-h-screen bg-background text-foreground ${inter.className}`}>
-      <header className="p-6 flex justify-between items-center">
-        <motion.div
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-        >
-          <Button variant="ghost" onClick={() => router.push('/')}>
-            <ChevronLeft className="h-5 w-5 mr-2" />
-            Back to Home
-          </Button>
-        </motion.div>
-        <h1 className="text-2xl font-bold">
-          <Link href="/">Daccy AI Chat</Link>
-        </h1>
-        <nav className="flex items-center gap-4">
-          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-            <Button variant="ghost" onClick={toggleTheme}>
-              {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
-            </Button>
-          </motion.div>
-          <SignedOut>
-            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-              <SignInButton>
-                <Button variant="default">Sign In</Button>
-              </SignInButton>
-            </motion.div>
-          </SignedOut>
-          <SignedIn>
-            <UserButton afterSignOutUrl="/" />
-          </SignedIn>
-        </nav>
-      </header>
+      <NavbarComponent />
 
       <main className="container mx-auto px-6 py-12">
         <Card className="w-full max-w-4xl mx-auto">
@@ -128,11 +99,10 @@ export default function ChatInterface() {
                   className={`mb-4 ${message.isUser ? 'text-right' : 'text-left'}`}
                 >
                   <div
-                    className={`inline-block p-3 rounded-lg ${
-                      message.isUser
+                    className={`inline-block p-3 rounded-lg ${message.isUser
                         ? 'bg-primary text-primary-foreground'
                         : 'bg-muted'
-                    }`}
+                      }`}
                   >
                     {message.content}
                   </div>

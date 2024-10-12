@@ -9,7 +9,7 @@ import type { Metadata } from 'next';
 import localFont from 'next/font/local';
 import './globals.css';
 import { ThemeProvider } from '@/components/ui/themeprovider';
-
+import { ChatBoxComponent } from '@/components/chat-box';
 // Load local fonts
 const geistSans = localFont({
   src: './fonts/GeistVF.woff',
@@ -45,6 +45,8 @@ export default function RootLayout({
             disableTransitionOnChange
           >
             {children}
+            {/* ChatBoxComponent added here */}
+            <ChatBoxComponent />
           </ThemeProvider>
         </body>
       </html>

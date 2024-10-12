@@ -56,18 +56,12 @@ export default function Component() {
 
       <main className="container mx-auto p-4 flex flex-col items-center justify-center flex-grow">
         <motion.div
-          className="grid grid-cols-1 md:grid-cols-2 gap-6"
+          className="grid grid-cols-1 md:grid-cols-3 gap-6"
           initial="hidden"
           animate="visible"
           variants={cardVariants}
         >
           {[
-            {
-              title: "AI Chatbot",
-              description: "Interact with an AI-powered chatbot",
-              link: "/pages/chatbot",
-              buttonText: "Start Chatting",
-            },
             {
               title: "Problem Puzzles",
               description: "Challenge yourself with AI-generated puzzles",
@@ -116,10 +110,10 @@ export default function Component() {
         </motion.div>
       </main>
       <footer className="bg-background py-8">
-                <div className="mx-auto px-6 text-center text-muted-foreground">
-                    <p>&copy; Daccy. All rights reserved.</p>
-                </div>
-            </footer>
+        <div className="mx-auto px-6 text-center text-muted-foreground">
+          <p>&copy; Daccy. All rights reserved.</p>
+        </div>
+      </footer>
     </div>
   );
 }

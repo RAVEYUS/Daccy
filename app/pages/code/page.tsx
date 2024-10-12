@@ -12,6 +12,7 @@ import { useTheme } from "next-themes";
 import Link from 'next/link';
 import Editor from "@monaco-editor/react";
 import React from 'react';
+import { NavbarComponent } from '@/components/navbar';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -91,20 +92,7 @@ export default function AIDebugChallenge() {
 
   return (
     <div className={`min-h-screen bg-background text-foreground ${inter.className}`}>
-      <header className="p-6 ml-4 flex justify-between items-center">
-        <h1 className="text-2xl"><Link href="/">Daccy</Link></h1>
-        <nav className="flex items-center gap-4">
-          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-            <Button variant="ghost" onClick={toggleTheme} aria-label="Toggle theme">
-              {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
-            </Button>
-          </motion.div>
-          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-            <Button><Link href="/pages/interface">Back</Link></Button>
-          </motion.div>
-        </nav>
-      </header>
-
+      <NavbarComponent />
       <main className="container mx-auto px-6 py-12">
         <div className="flex flex-col md:flex-row gap-6 mb-12">
           <div className="md:w-1/3 space-y-6">

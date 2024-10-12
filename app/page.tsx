@@ -1,15 +1,14 @@
-"use client"
+'use client'
 
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { ChevronRight, BookOpen, Code, MessageSquare, Moon, Sun } from 'lucide-react'
+import { ChevronRight, BookOpen, Code, MessageSquare } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { useTheme } from "next-themes"
-import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { Inter } from 'next/font/google'
-import { SignedIn, SignedOut, SignInButton, UserButton } from '@clerk/nextjs'; // Ensure you have this import
+import { NavbarComponent } from '@/components/navbar'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -29,10 +28,6 @@ export default function LandingPage() {
     { icon: MessageSquare, title: 'AI-Powered Assistance', description: 'Get personalized help and explanations from our AI tutor.' },
   ]
 
-  const toggleTheme = () => {
-    setTheme(theme === 'dark' ? 'light' : 'dark')
-  }
-
   const redirectToNextPage = () => {
     router.push('/pages/interface')
   }
@@ -41,28 +36,7 @@ export default function LandingPage() {
 
   return (
     <div className={`min-h-screen bg-background text-foreground ${inter.className}`}>
-      <header className="p-6 ml-4 flex justify-between items-center">
-        <h1 className="text-2xl"><Link href="/">Daccy</Link></h1>
-        <nav className="flex items-center gap-4">
-          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-            <Button variant="ghost" onClick={toggleTheme}>
-              {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
-            </Button>
-          </motion.div>
-
-          {/* User Authentication */}
-          <SignedOut>
-            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-              <SignInButton>
-                <Button variant="default">Sign In / Sign Up</Button>
-              </SignInButton>
-            </motion.div>
-          </SignedOut>
-          <SignedIn>
-            <UserButton />
-          </SignedIn>
-        </nav>
-      </header>
+      <NavbarComponent />
 
       <main className="container mx-auto px-6 py-12 text-center">
         <motion.h2
@@ -105,8 +79,9 @@ export default function LandingPage() {
               className="w-full md:w-[30%] mb-6"
             >
               <Card
-                className={`h-full p-4 transition duration-300 border ${theme === 'dark' ? 'border-transparent hover:border-white' : 'border-transparent hover:border-black'
-                  }`}
+                className={`h-full p-4 transition duration-300 border ${
+                  theme === 'dark' ? 'border-transparent hover:border-white' : 'border-transparent hover:border-black'
+                }`}
               >
                 <CardHeader>
                   <feature.icon className="h-10 w-10 text-primary mb-2" />
@@ -119,8 +94,9 @@ export default function LandingPage() {
         </div>
 
         <motion.div
-          className={`bg-muted p-8 rounded-lg transition duration-300 border ${theme === 'dark' ? 'border-transparent hover:border-white' : 'border-transparent hover:border-black'
-            }`}
+          className={`bg-muted p-8 rounded-lg transition duration-300 border ${
+            theme === 'dark' ? 'border-transparent hover:border-white' : 'border-transparent hover:border-black'
+          }`}
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.2, delay: 1.4 }}
@@ -137,7 +113,7 @@ export default function LandingPage() {
 
       <footer className="bg-background py-8">
         <div className="mx-auto px-6 text-center text-muted-foreground">
-          <p>&copy; Daccy. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} Daccy. All rights reserved.</p>
         </div>
       </footer>
     </div>
