@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { MessageSquare, X, Send } from 'lucide-react'
+import { MessageSquare, X, Send, Loader2 } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { ScrollArea } from "@/components/ui/scroll-area"
@@ -64,6 +64,7 @@ export function ChatBoxComponent() {
       <Button
         className="fixed bottom-4 right-4 rounded-full p-4"
         onClick={() => setIsOpen(!isOpen)}
+        aria-label={isOpen ? "Close chat" : "Open chat"}
       >
         <MessageSquare className="h-6 w-6" />
       </Button>
@@ -71,43 +72,53 @@ export function ChatBoxComponent() {
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, x: 300 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: 300 }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 20 }}
+            transition={{ duration: 0.2 }}
             className="fixed bottom-20 right-4 w-80 sm:w-96"
+            style={{ height: 'calc(100vh - 120px)' }}
           >
-            <Card className="h-[70vh] flex flex-col">
-              <CardHeader className="flex flex-row items-center justify-between">
-                <CardTitle>Daccy AI Chat</CardTitle>
-                <Button variant="ghost" size="icon" onClick={() => setIsOpen(false)}>
+            <Card className="h-full flex flex-col shadow-lg">
+              <CardHeader className="flex flex-row items-center justify-between py-3">
+                <CardTitle className="text-lg">Daccy Chat</CardTitle>
+                <Button variant="ghost" size="icon" onClick={() => setIsOpen(false)} aria-label="Close chat">
                   <X className="h-4 w-4" />
                 </Button>
               </CardHeader>
-              <CardContent className="flex-grow flex flex-col">
-                <ScrollArea className="flex-grow mb-4" ref={scrollAreaRef}>
-                  {messages.map((message, index) => (
-                    <div
-                      key={index}
-                      className={`mb-2 p-2 rounded-lg ${
-                        message.isUser ? 'bg-primary text-primary-foreground ml-auto' : 'bg-muted'
-                      } max-w-[80%]`}
-                    >
-                      {message.content}
-                    </div>
-                  ))}
+              <CardContent className="flex-grow flex flex-col p-0 overflow-hidden">
+                <ScrollArea className="flex-grow px-4" ref={scrollAreaRef}>
+                  <div className="space-y-4 py-4">
+                    {messages.map((message, index) => (
+                      <div
+                        key={index}
+                        className={`flex ${message.isUser ? 'justify-end' : 'justify-start'}`}
+                      >
+                        <div
+                          className={`rounded-lg px-3 py-2 max-w-[80%] ${
+                            message.isUser ? 'bg-primary text-primary-foreground' : 'bg-muted'
+                          }`}
+                        >
+                          {message.content}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </ScrollArea>
-                <div className="flex gap-2">
-                  <Input
-                    type="text"
-                    value={inputMessage}
-                    onChange={(e) => setInputMessage(e.target.value)}
-                    onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
-                    placeholder="Ask about DSA..."
-                    disabled={isLoading}
-                  />
-                  <Button onClick={sendMessage} disabled={isLoading}>
-                    {isLoading ? 'Sending...' : <Send className="h-4 w-4" />}
-                  </Button>
+                <div className="p-4 border-t">
+                  <form onSubmit={(e) => { e.preventDefault(); sendMessage(); }} className="flex gap-2">
+                    <Input
+                      type="text"
+                      value={inputMessage}
+                      onChange={(e) => setInputMessage(e.target.value)}
+                      placeholder="Ask me anything"
+                      disabled={isLoading}
+                      aria-label="Chat message"
+                    />
+                    <Button type="submit" disabled={isLoading} aria-label="Send message">
+                      {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+                    </Button>
+                  </form>
                 </div>
               </CardContent>
             </Card>
