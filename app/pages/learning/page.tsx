@@ -108,7 +108,7 @@ export default function LearningInterfaceComponent() {
     <div className={`min-h-screen bg-background text-foreground ${inter.className}`}>
       <NavbarComponent />
 
-      <main className="container mx-auto px-6 py-12">
+      <main className="container mx-auto px-6 py-1 mb-2">
         <div className="flex flex-col md:flex-row gap-6 mt-8">
           {/* Topics Grid (Left Side) */}
           <Card className="w-full md:w-1/3 lg:w-1/4 bg-card">
