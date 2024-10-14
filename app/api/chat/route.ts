@@ -39,7 +39,7 @@ export async function POST(request: Request) {
       temperature: 1.75,
       topP: 0.95,
       topK: 64,
-      maxOutputTokens: 100,
+      maxOutputTokens: 40,
       responseMimeType: 'text/plain',
     };
 
