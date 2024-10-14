@@ -1,4 +1,4 @@
-'use client'
+"use client"
 
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
@@ -108,6 +108,20 @@ export default function LandingPage() {
             Explore Topics
             <ChevronRight className="ml-2 h-4 w-4" />
           </Button>
+        </motion.div>
+
+        <motion.div
+          className="mt-12 flex items-center justify-center"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 1.6 }}
+        >
+          <p className="text-sm text-muted-foreground mr-2 mb-0.5 mt-2">Powered by</p>
+          <img
+            src="https://cdn.freelogovectors.net/wp-content/uploads/2024/02/gemini-logo-chatbot-freelogovectors.net_-640x400.png"
+            alt="Gemini Logo"
+            className="w-14 h-auto"
+          />
         </motion.div>
       </main>
 
