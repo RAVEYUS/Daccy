@@ -104,7 +104,9 @@ export default function ChatInterface() {
                         : 'bg-muted'
                       }`}
                   >
-                    {message.content}
+                    <div className='font-sans whitespace-pre-wrap break-words'> {/* Changed from <pre> to <div> */}
+                          {message.content}
+                    </div>
                   </div>
                 </motion.div>
               ))}

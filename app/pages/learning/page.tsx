@@ -109,7 +109,7 @@ export default function LearningInterfaceComponent() {
       <NavbarComponent />
 
       <main className="container mx-auto px-6 py-1 mb-2">
-        <div className="flex flex-col md:flex-row gap-6 mt-8">
+        <div className="flex flex-col md:flex-row gap-6 mt-2">
           {/* Topics Grid (Left Side) */}
           <Card className="w-full md:w-1/3 lg:w-1/4 bg-card">
             <CardHeader>
@@ -133,9 +133,8 @@ export default function LearningInterfaceComponent() {
                       key={topic.id}
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
-                      className={`cursor-pointer p-4 rounded-lg shadow-md flex flex-col items-center justify-center text-center aspect-square ${
-                        selectedTopic?.id === topic.id ? 'bg-primary text-primary-foreground' : 'bg-card-foreground/10'
-                      }`}
+                      className={`cursor-pointer p-4 rounded-lg shadow-md flex flex-col items-center justify-center text-center aspect-square ${selectedTopic?.id === topic.id ? 'bg-primary text-primary-foreground' : 'bg-card-foreground/10'
+                        }`}
                       onClick={() => handleTopicSelect(topic)}
                     >
                       <div className="mb-2">{topic.icon}</div>
@@ -194,21 +193,22 @@ export default function LearningInterfaceComponent() {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5 }}
-                  className="h-[calc(100vh-16rem)] flex flex-col"
+                  className="h-[calc(100vh-11rem)] flex flex-col"
                 >
                   <ScrollArea className="flex-grow mb-4">
                     {messages.map((message, index) => (
                       <div
                         key={index}
-                        className={`mb-4 p-3 rounded-lg ${
-                          message.isUser ? 'bg-primary text-primary-foreground ml-auto' : 'bg-muted'
-                        } max-w-[80%]`}
+                        className={`mb-4 p-3 rounded-lg ${message.isUser ? 'bg-primary text-primary-foreground ml-auto' : 'bg-muted'
+                          } max-w-[80%]`}
                       >
-                        {message.content}
+                        <div className='font-sans whitespace-pre-wrap break-words'> {/* Changed from <pre> to <div> */}
+                          {message.content}
+                        </div>
                       </div>
                     ))}
                   </ScrollArea>
-                  <div className="flex gap-2">
+                  <div className="flex gap-2 ">
                     <Input
                       type="text"
                       value={inputMessage}
