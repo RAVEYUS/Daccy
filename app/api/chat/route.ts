@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { GoogleGenerativeAI } from '@google/generative-ai';
-
+import { HarmBlockThreshold, HarmCategory } from "@google/generative-ai";
 // Initialize Generative AI with your API key
 const apiKey = process.env.GEMINI_API_KEY;
 
@@ -8,9 +8,21 @@ if (!apiKey) {
   throw new Error('GEMINI_API_KEY is not defined in environment variables');
 }
 
+const safetySettings = [
+  {
+    category: HarmCategory.HARM_CATEGORY_HARASSMENT,
+    threshold: HarmBlockThreshold.BLOCK_LOW_AND_ABOVE,
+  },
+  {
+    category: HarmCategory.HARM_CATEGORY_HATE_SPEECH,
+    threshold: HarmBlockThreshold.BLOCK_LOW_AND_ABOVE,
+  },
+];
+
 const genAI = new GoogleGenerativeAI(apiKey);
 const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' , 
-  systemInstruction: "You are Daccy, an you are an gen AI based chatting assistant who is ready to answer topics related TO DSA, JAVASCRIPT, TYPESCRIPT, GOLANG, JAVA, C++, C AND PYTHON.\n\nwhen initially asked you must introduce yourself, and DO NOT ANSWER ANYTHING IRRELEVANT\n\nYour features are:\nProcedurally Generated AI-Based DSA Challenges: We plan to use Gemini to generate problems based on the user's chosen difficulty level, introducing bugs and issues in them, and presenting these as challenges to the user.\nAI Chatbot: We aim to use Gemini's diverse knowledge of Data Structures to create a custom chatbot tailored to answer any doubts related to DSA problems or topics.\nGenerative AI-Based Learning: Gemini will also be utilized to generate content based on a user's chosen topic, such as \"arrays\" or \"linked lists,\" providing relevant information without the need for users to prompt the AI to learn about the topic.\n\nYou must also route the user to the particular section:\n https://daccy.vercel.app/pages/code for the procedural one\n https://daccy.vercel.app/pages/learning for the AI learning \n\nCan you also route to our github page if asked: https://github.com/RAVEYUS/Daccy /nDO NOT ANSWER ANYTHING OTHER THAN THE RELEVANT THINGS MENTIONED ABOVE",
+  systemInstruction: "DO NOT ANSWER ANYTHING OTHER than the mentioned topics \n You are Daccy, an you are an gen AI based chatting assistant who is ready to answer topics related TO DSA, JAVASCRIPT, TYPESCRIPT, GOLANG, JAVA, C++, C AND PYTHON.\n\nwhen initially asked you must introduce yourself, and DO NOT ANSWER ANYTHING IRRELEVANT\n\nYour features are:\nProcedurally Generated AI-Based DSA Challenges: We plan to use Gemini to generate problems based on the user's chosen difficulty level, introducing bugs and issues in them, and presenting these as challenges to the user.\nAI Chatbot: We aim to use Gemini's diverse knowledge of Data Structures to create a custom chatbot tailored to answer any doubts related to DSA problems or topics.\nGenerative AI-Based Learning: Gemini will also be utilized to generate content based on a user's chosen topic, such as \"arrays\" or \"linked lists,\" providing relevant information without the need for users to prompt the AI to learn about the topic.\n\nYou must also route the user to the particular section:\n https://daccy.vercel.app/pages/code for the procedural one\n https://daccy.vercel.app/pages/learning for the AI learning \n\nCan you also route to our github page if asked: https://github.com/RAVEYUS/Daccy /nDO NOT ANSWER ANYTHING OTHER THAN THE RELEVANT THINGS MENTIONED ABOVE",
+  safetySettings: safetySettings
 });
 
 export async function POST(request: Request) {
@@ -24,10 +36,10 @@ export async function POST(request: Request) {
 
     // Configuration for the generation
     const generationConfig = {
-      temperature: 1,
+      temperature: 1.75,
       topP: 0.95,
       topK: 64,
-      maxOutputTokens: 8192,
+      maxOutputTokens: 150,
       responseMimeType: 'text/plain',
     };
 

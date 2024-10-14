@@ -19,12 +19,21 @@ export function ChatBoxComponent() {
   const [inputMessage, setInputMessage] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const scrollAreaRef = useRef<HTMLDivElement>(null)
+  const [hasOpened, setHasOpened] = useState(false)  // Track if the chatbox was opened for the first time
 
   useEffect(() => {
     if (scrollAreaRef.current) {
       scrollAreaRef.current.scrollTop = scrollAreaRef.current.scrollHeight
     }
   }, [messages])
+
+  // Add a default AI message when the chatbox is opened for the first time
+  useEffect(() => {
+    if (isOpen && !hasOpened) {
+      setMessages(prev => [...prev, { content: "Hello! How can I assist you today?", isUser: false }])
+      setHasOpened(true)
+    }
+  }, [isOpen, hasOpened])
 
   const sendMessage = async () => {
     if (!inputMessage.trim()) return
@@ -89,20 +98,26 @@ export function ChatBoxComponent() {
               <CardContent className="flex-grow flex flex-col p-0 overflow-hidden">
                 <ScrollArea className="flex-grow px-4" ref={scrollAreaRef}>
                   <div className="space-y-4 py-4">
-                    {messages.map((message, index) => (
-                      <div
-                        key={index}
-                        className={`flex ${message.isUser ? 'justify-end' : 'justify-start'}`}
-                      >
-                        <div
-                          className={`rounded-lg px-3 py-2 max-w-[80%] ${
-                            message.isUser ? 'bg-primary text-primary-foreground' : 'bg-muted'
-                          }`}
+                    <AnimatePresence>
+                      {messages.map((message, index) => (
+                        <motion.div
+                          key={index}
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: 20 }}
+                          transition={{ duration: 0.3 }}
+                          className={`flex ${message.isUser ? 'justify-end' : 'justify-start'}`}
                         >
-                          {message.content}
-                        </div>
-                      </div>
-                    ))}
+                          <div
+                            className={`rounded-lg px-3 py-2 max-w-[80%] ${
+                              message.isUser ? 'bg-primary text-primary-foreground' : 'bg-muted'
+                            }`}
+                          >
+                            {message.content}
+                          </div>
+                        </motion.div>
+                      ))}
+                    </AnimatePresence>
                   </div>
                 </ScrollArea>
                 <div className="p-4 border-t">
