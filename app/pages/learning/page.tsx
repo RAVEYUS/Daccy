@@ -65,7 +65,7 @@ export default function LearningInterfaceComponent() {
   }
 
   const sendMessage = async () => {
-    if (!inputMessage.trim() || !selectedTopic) return
+    if (!inputMessage.trim() || !selectedTopic || !language) return
 
     const userMessage = { content: inputMessage, isUser: true }
     setMessages(prev => [...prev, userMessage])
@@ -78,7 +78,11 @@ export default function LearningInterfaceComponent() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ message: inputMessage, selectedTopic: selectedTopic.id }),
+        body: JSON.stringify({
+          message: inputMessage,
+          selectedTopic: selectedTopic.id,
+          language: language
+        }),
       })
 
       if (!response.ok) {
@@ -133,8 +137,9 @@ export default function LearningInterfaceComponent() {
                       key={topic.id}
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
-                      className={`cursor-pointer p-4 rounded-lg shadow-md flex flex-col items-center justify-center text-center aspect-square ${selectedTopic?.id === topic.id ? 'bg-primary text-primary-foreground' : 'bg-card-foreground/10'
-                        }`}
+                      className={`cursor-pointer p-4 rounded-lg shadow-md flex flex-col items-center justify-center text-center aspect-square ${
+                        selectedTopic?.id === topic.id ? 'bg-primary text-primary-foreground' : 'bg-card-foreground/10'
+                      }`}
                       onClick={() => handleTopicSelect(topic)}
                     >
                       <div className="mb-2">{topic.icon}</div>
@@ -199,10 +204,11 @@ export default function LearningInterfaceComponent() {
                     {messages.map((message, index) => (
                       <div
                         key={index}
-                        className={`mb-4 p-3 rounded-lg ${message.isUser ? 'bg-primary text-primary-foreground ml-auto' : 'bg-muted'
-                          } max-w-[80%]`}
+                        className={`mb-4 p-3 rounded-lg ${
+                          message.isUser ? 'bg-primary text-primary-foreground ml-auto' : 'bg-muted'
+                        } max-w-[80%]`}
                       >
-                        <div className='font-sans whitespace-pre-wrap break-words'> {/* Changed from <pre> to <div> */}
+                        <div className='font-sans whitespace-pre-wrap break-words'>
                           {message.content}
                         </div>
                       </div>
