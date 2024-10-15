@@ -4,18 +4,22 @@ import ForceDirectedTree from '@/components/loadGraph';
 
 const TreePage = () => {
   const nodes = [
-    { id: 'A', group: 1 },
-    { id: 'B', group: 1 },
-    { id: 'C', group: 2 },
-    { id: 'D', group: 2 },
-    { id: 'E', group: 3 },
+    { name: 'd3' },
+    { name: 'd3.svg' },
+    { name: 'd3.svg.area' },
+    { name: 'd3.svg.line' },
+    { name: 'd3.scale' },
+    { name: 'd3.scale.linear' },
+    { name: 'd3.scale.ordinal' }
   ];
 
   const links = [
-    { source: 'A', target: 'B' },
-    { source: 'A', target: 'C' },
-    { source: 'B', target: 'D' },
-    { source: 'C', target: 'E' },
+    { source: 0, target: 1 },
+    { source: 1, target: 2 },
+    { source: 1, target: 3 },
+    { source: 0, target: 4 },
+    { source: 4, target: 5 },
+    { source: 4, target: 6 }
   ];
 
   return (
