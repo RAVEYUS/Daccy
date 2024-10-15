@@ -1,6 +1,6 @@
 // pages/tree.js
-"use client"
-import ForceDirectedTree from '@/components/loadGraph';
+"use client";
+import CollapsibleTree from '@/components/loadGraph'; // Update the import to use CollapsibleTree
 
 const TreePage = () => {
   // Hierarchical structure of nodes
@@ -74,9 +74,11 @@ const TreePage = () => {
   };
 
   return (
-    <div className=''>
+    <div className='p-4'>
       <h1>Hierarchical Tree</h1>
-      <ForceDirectedTree nodes={[nodes]} width={1920} height={2000} />
+      <div>
+        <CollapsibleTree data={nodes} /> {/* Use CollapsibleTree component */}
+      </div>
     </div>
   );
 };
