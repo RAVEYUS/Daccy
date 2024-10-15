@@ -97,9 +97,9 @@ export default function CollapsibleTree({ data }) {
         .attr("x", d => d._children ? -8 : 8)
         .attr("text-anchor", d => d._children ? "end" : "start")
         .text(d => d.data.name)
-        .attr("fill", "#333")
+        .attr("fill", "white") // Change text color to white for better visibility
         .clone(true).lower()
-        .attr("stroke", "white")
+        .attr("stroke", "black") // Adjust stroke color for better contrast
         .attr("stroke-width", 3)
 
       // Transition nodes to their new position.
