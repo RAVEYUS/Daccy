@@ -19,9 +19,9 @@ const TreePage = () => {
   ];
 
   return (
-    <div>
+    <div className='overflow-x-hidden'>
       <h1>Force-Directed Tree</h1>
-      <ForceDirectedTree nodes={nodes} links={links} width={800} height={600} />
+      <ForceDirectedTree nodes={nodes} links={links} width={1920} height={800} />
     </div>
   );
 };

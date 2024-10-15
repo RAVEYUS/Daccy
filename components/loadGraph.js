@@ -3,7 +3,7 @@
 import React, { useEffect, useRef } from 'react';
 import * as d3 from 'd3';
 
-const ForceDirectedTree = ({ width = 800, height = 600, nodes, links }) => {
+const ForceDirectedTree = ({ width , height , nodes, links }) => {
   const svgRef = useRef(null);
 
   useEffect(() => {
@@ -23,8 +23,8 @@ const ForceDirectedTree = ({ width = 800, height = 600, nodes, links }) => {
           .id((d) => d.id)
           .distance(100)
       )
-      .force('charge', d3.forceManyBody().strength(-400))
-      .force('center', d3.forceCenter(width / 2, height / 2));
+      .force('charge', d3.forceManyBody().strength(-300))
+      .force('center', d3.forceCenter(width / 2.4, height / 2.4));
 
     // Create links
     const link = svg
