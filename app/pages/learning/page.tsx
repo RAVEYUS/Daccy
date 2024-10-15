@@ -19,21 +19,22 @@ type Topic = {
   description: string
   icon: React.ReactNode
   category: string
+  requiresLanguage: boolean
 }
 
 const topics: Topic[] = [
-  { id: 'arrays', title: 'Arrays and Strings', description: 'Fundamental data structures for storing collections of elements.', icon: <Database className="h-6 w-6" />, category: 'Data Structures' },
-  { id: 'linkedlists', title: 'Linked Lists', description: 'Linear data structures with nodes pointing to the next element.', icon: <Database className="h-6 w-6" />, category: 'Data Structures' },
-  { id: 'trees', title: 'Trees and Graphs', description: 'Hierarchical and interconnected data structures.', icon: <Database className="h-6 w-6" />, category: 'Data Structures' },
-  { id: 'sorting', title: 'Sorting Algorithms', description: 'Methods for arranging data in a specific order.', icon: <Code className="h-6 w-6" />, category: 'Algorithms' },
-  { id: 'searching', title: 'Searching Algorithms', description: 'Techniques for finding specific elements in data structures.', icon: <Code className="h-6 w-6" />, category: 'Algorithms' },
-  { id: 'dynamic', title: 'Dynamic Programming', description: 'Solving complex problems by breaking them into simpler subproblems.', icon: <Cpu className="h-6 w-6" />, category: 'Advanced Concepts' },
-  { id: 'greedy', title: 'Greedy Algorithms', description: 'Making locally optimal choices at each stage for a global optimum.', icon: <Cpu className="h-6 w-6" />, category: 'Advanced Concepts' },
-  { id: 'backtracking', title: 'Backtracking', description: 'Solving problems incrementally and undoing choices that fail.', icon: <Cpu className="h-6 w-6" />, category: 'Advanced Concepts' },
+  { id: 'docker', title: 'Docker', description: 'A platform for developing, shipping, and running applications in containers.', icon: <Cpu className="h-6 w-6" />, category: 'DevOps', requiresLanguage: false },
+  { id: 'kubernetes', title: 'Kubernetes', description: 'An open-source platform for automating deployment, scaling, and management of containerized applications.', icon: <Cpu className="h-6 w-6" />, category: 'DevOps', requiresLanguage: false },
+  { id: 'web3', title: 'Web3 and Blockchain', description: 'The decentralized web powered by blockchain technology.', icon: <Database className="h-6 w-6" />, category: 'Advanced Concepts', requiresLanguage: false },
+  { id: 'sorting', title: 'Sorting Algorithms', description: 'Methods for arranging data in a specific order.', icon: <Code className="h-6 w-6" />, category: 'Algorithms', requiresLanguage: true },
+  { id: 'searching', title: 'Searching Algorithms', description: 'Techniques for finding specific elements in data structures.', icon: <Code className="h-6 w-6" />, category: 'Algorithms', requiresLanguage: true },
+  { id: 'dynamic', title: 'Dynamic Programming', description: 'Solving complex problems by breaking them into simpler subproblems.', icon: <Cpu className="h-6 w-6" />, category: 'Advanced Concepts', requiresLanguage: true },
+  { id: 'greedy', title: 'Greedy Algorithms', description: 'Making locally optimal choices at each stage for a global optimum.', icon: <Cpu className="h-6 w-6" />, category: 'Advanced Concepts', requiresLanguage: true },
+  { id: 'backtracking', title: 'Backtracking', description: 'Solving problems incrementally and undoing choices that fail.', icon: <Cpu className="h-6 w-6" />, category: 'Advanced Concepts', requiresLanguage: true },
 ]
 
 const languages = [
-  'Python', 'JavaScript', 'Java', 'C++', 'Ruby', 'Go', 'Swift', 'Kotlin', 'TypeScript', 'Rust'
+  'Python', 'JavaScript', 'Java', 'C++', 'TypeScript', 'Rust'
 ]
 
 export default function LearningInterfaceComponent() {
@@ -54,18 +55,28 @@ export default function LearningInterfaceComponent() {
     setSelectedTopic(topic)
     setShowChat(false)
     setMessages([])
+    if (!topic.requiresLanguage) {
+      setLanguage('')
+      setShowChat(true)
+      setMessages([{ content: `Welcome! I'm ready to help you learn about ${topic.title}. What would you like to know?`, isUser: false }])
+    }
   }
 
   const handleLanguageSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    if (language && selectedTopic) {
+    if (selectedTopic) {
+      if (selectedTopic.requiresLanguage && !language) return
       setShowChat(true)
-      setMessages([{ content: `Welcome! I'm ready to help you learn about ${selectedTopic.title} in ${language}. What would you like to know?`, isUser: false }])
+      const welcomeMessage = selectedTopic.requiresLanguage
+        ? `Welcome! I'm ready to help you learn about ${selectedTopic.title} in ${language}. What would you like to know?`
+        : `Welcome! I'm ready to help you learn about ${selectedTopic.title}. What would you like to know?`
+      setMessages([{ content: welcomeMessage, isUser: false }])
     }
   }
 
   const sendMessage = async () => {
-    if (!inputMessage.trim() || !selectedTopic || !language) return
+    if (!inputMessage.trim() || !selectedTopic) return
+    if (selectedTopic.requiresLanguage && !language) return
 
     const userMessage = { content: inputMessage, isUser: true }
     setMessages(prev => [...prev, userMessage])
@@ -81,7 +92,7 @@ export default function LearningInterfaceComponent() {
         body: JSON.stringify({
           message: inputMessage,
           selectedTopic: selectedTopic.id,
-          language: language
+          language: selectedTopic.requiresLanguage ? language : undefined
         }),
       })
 
@@ -174,19 +185,21 @@ export default function LearningInterfaceComponent() {
                   <h2 className="text-2xl mb-4">{selectedTopic.title}</h2>
                   <p className="mb-6">{selectedTopic.description}</p>
                   <form onSubmit={handleLanguageSubmit} className="flex gap-2">
-                    <Select onValueChange={setLanguage} value={language}>
-                      <SelectTrigger className="w-[180px]">
-                        <SelectValue placeholder="Select Language" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {languages.map((lang) => (
-                          <SelectItem key={lang} value={lang}>
-                            {lang}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <Button type="submit" disabled={!language}>
+                    {selectedTopic.requiresLanguage && (
+                      <Select onValueChange={setLanguage} value={language}>
+                        <SelectTrigger className="w-[180px]">
+                          <SelectValue placeholder="Select Language" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {languages.map((lang) => (
+                            <SelectItem key={lang} value={lang}>
+                              {lang}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    )}
+                    <Button type="submit" disabled={selectedTopic.requiresLanguage && !language}>
                       Start Learning
                       <ChevronRight className="ml-2 h-4 w-4" />
                     </Button>
