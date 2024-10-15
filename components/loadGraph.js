@@ -2,53 +2,45 @@
 import React, { useEffect, useRef } from 'react';
 import * as d3 from 'd3';
 
-const ForceDirectedTree = ({ width , height , nodes, links }) => {
+const ForceDirectedTree = ({ width, height, nodes }) => {
   const svgRef = useRef(null);
 
   useEffect(() => {
-    if (!nodes.length || !links.length) return;
+    if (!nodes.length) return;
 
     // Clear the svg content if it was rendered before
     const svg = d3.select(svgRef.current);
     svg.selectAll('*').remove();
 
-    // Define force simulation
-    const force = d3.forceSimulation(nodes)
-      .force('link', d3.forceLink(links).id(d => d.index).distance(100))
-      .force('charge', d3.forceManyBody().strength(-350))
-      .force('center', d3.forceCenter(width / 3, height / 2))
-      .force('gravity', d3.forceY(0.10));
+    // Create a hierarchy from the nodes
+    const root = d3.hierarchy(nodes[0]);
+
+    // Create a tree layout with adjusted size
+    const treeLayout = d3.tree()
+      .size([height, width - 300]); // Adjust width to control line length
+
+    // Compute the new tree layout
+    treeLayout(root);
 
     // Create links
     const link = svg.selectAll('.link')
-      .data(links)
+      .data(root.links())
       .enter().append('line')
       .attr('class', 'link')
       .attr('stroke', '#999')
       .attr('stroke-opacity', 0.6)
-      .attr('stroke-width', 2);
+      .attr('stroke-width', 2)
+      .attr('x1', d => d.source.y + 100) // Shift links to the right
+      .attr('y1', d => d.source.x)
+      .attr('x2', d => d.target.y + 100) // Shift links to the right
+      .attr('y2', d => d.target.x);
 
     // Create nodes as groups
     const node = svg.selectAll('.node')
-      .data(nodes)
+      .data(root.descendants())
       .enter().append('g')
       .attr('class', 'node')
-      .call(d3.drag()
-        .on('start', (event, d) => {
-          if (!event.active) force.alphaTarget(0.3).restart();
-          d.fx = d.x;
-          d.fy = d.y;
-        })
-        .on('drag', (event, d) => {
-          d.fx = event.x;
-          d.fy = event.y;
-        })
-        .on('end', (event, d) => {
-          if (!event.active) force.alphaTarget(0);
-          d.fx = null;
-          d.fy = null;
-        })
-      );
+      .attr('transform', d => `translate(${d.y + 100},${d.x})`); // Shift nodes to the right
 
     // Add circle to nodes
     node.append('circle')
@@ -60,33 +52,17 @@ const ForceDirectedTree = ({ width , height , nodes, links }) => {
       .attr('dx', 12)
       .attr('dy', '.35em')
       .attr('fill', '#ffffff')
-      .text(d => d.name);
+      .text(d => d.data.name)
+      .style('visibility', d => (d.depth === 0 ? 'visible' : 'hidden')); // Show only root node by default
 
-    // Simulation tick behavior
-    force.on('tick', () => {
-      const k = 10 * force.alpha(); // Adjust vertical force using the simulation's alpha
-
-      // Apply custom forces on the y-axis during each tick
-      links.forEach(d => {
-        d.source.y -= k;
-        d.target.y += k;
-      });
-
-      // Update link positions
-      link.attr('x1', d => d.source.x)
-          .attr('y1', d => d.source.y)
-          .attr('x2', d => d.target.x)
-          .attr('y2', d => d.target.y);
-
-      // Update node positions
-      node.attr('transform', d => `translate(${d.x},${d.y})`);
+    // Show node names on hover
+    node.on('mouseover', function () {
+      d3.select(this).select('text').style('visibility', 'visible');
+    }).on('mouseout', function () {
+      d3.select(this).select('text').style('visibility', d => (d.depth === 0 ? 'visible' : 'hidden'));
     });
 
-    // Clean up the simulation on component unmount
-    return () => {
-      force.stop();
-    };
-  }, [nodes, links, width, height]);
+  }, [nodes, width, height]);
 
   return <svg ref={svgRef} width={width} height={height}></svg>;
 };
