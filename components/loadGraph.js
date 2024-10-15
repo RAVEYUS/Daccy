@@ -162,7 +162,7 @@ export default function CollapsibleTree({ data }) {
   }, [data])
 
   return (
-    <Card className="w-full max-w-[1200px] mx-auto">
+    <Card className="w-full max-w-[1200px] mx-auto ">
       <CardHeader>
         <CardTitle className="text-2xl font-bold">Array Methods and Properties</CardTitle>
       </CardHeader>
