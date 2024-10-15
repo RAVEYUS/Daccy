@@ -56,12 +56,18 @@ export default function Component() {
 
       <main className="container mx-auto p-4 flex flex-col items-center justify-center flex-grow">
         <motion.div
-          className="grid grid-cols-1 md:grid-cols-3 gap-6"
+          className="grid grid-cols-1 md:grid-cols-2 gap-6"
           initial="hidden"
           animate="visible"
           variants={cardVariants}
         >
           {[
+            {
+              title: "Visual Learning",
+              description: "Discover how to enhance your understanding through visual techniques.",
+              link: "/pages/graphtopic",
+              buttonText: "Get Started",
+            },
             {
               title: "Problem Puzzles",
               description: "Challenge yourself with AI-generated puzzles",
