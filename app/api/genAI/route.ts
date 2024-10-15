@@ -17,17 +17,25 @@ export async function POST(req: Request) {
   try {
     const { message, selectedTopic, language } = await req.json()
 
-    if (!message || !selectedTopic || !language) {
+    if (!message || !selectedTopic) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
     }
 
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY as string)
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" , safetySettings: safetySettings })
 
-    const prompt = `You are an AI tutor specializing in ${selectedTopic} using ${language}. 
-                    The user's question is: "${message}"
-                    Please provide a helpful, concise response tailored to their level of understanding.
-                    If code examples are appropriate, please include them.`
+    let prompt: string;
+    if (language) {
+      prompt = `You are an AI tutor specializing in ${selectedTopic} using ${language}. 
+                The user's question is: "${message}"
+                Please provide a helpful, concise response tailored to their level of understanding.
+                If code examples are appropriate, please include them.`
+    } else {
+      prompt = `You are an AI tutor specializing in ${selectedTopic}. 
+                The user's question is: "${message}"
+                Please provide a helpful, concise response tailored to their level of understanding.
+                If relevant examples are appropriate, please include them.`
+    }
 
     const result = await model.generateContent(prompt)
     const aiResponse = result.response.text()
