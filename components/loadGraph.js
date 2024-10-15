@@ -18,10 +18,12 @@ export default function CollapsibleTree({ data }) {
     const marginLeft = 120
 
     const root = d3.hierarchy(data)
-    const dx = 10
-    const dy = (width - marginRight - marginLeft) / (1 + root.height)
 
-    const tree = d3.tree().nodeSize([dx, dy])
+    // Adjust these values for spacing
+    const dx = 20; // Increase for more vertical spacing
+    const dy = (width - marginRight - marginLeft) / (1 + root.height) + 20; // Increase for more horizontal spacing
+
+    const tree = d3.tree().nodeSize([dx, dy]);
     const diagonal = d3.linkHorizontal()
       .x(d => d.y)
       .y(d => d.x)
@@ -37,13 +39,15 @@ export default function CollapsibleTree({ data }) {
 
     const gLink = svg.append("g")
       .attr("fill", "none")
-      .attr("stroke", "#555")
       .attr("stroke-opacity", 0.4)
-      .attr("stroke-width", 1.5)
+      .attr("stroke-width", 3); // Set a thicker stroke width
 
     const gNode = svg.append("g")
       .attr("cursor", "pointer")
       .attr("pointer-events", "all")
+
+    // Define an array of colors for the links
+    const linkColors = d3.schemeCategory10; // You can change this to any other color scheme
 
     // Update function to refresh the tree layout
     function update(event, source) {
@@ -120,10 +124,15 @@ export default function CollapsibleTree({ data }) {
           const o = { x: source.x0, y: source.y0 }
           return diagonal({ source: o, target: o })
         })
+        // Set the stroke color based on the index
+        .attr("stroke", (d, i) => linkColors[i % linkColors.length])
+        .attr("stroke-width", 3); // Set a thicker stroke width for entering links
 
       // Transition links to their new position.
       link.merge(linkEnter).transition(transition)
         .attr("d", diagonal)
+        .attr("stroke", (d, i) => linkColors[i % linkColors.length]) // Apply colors on update
+        .attr("stroke-width", 3); // Set a thicker stroke width for updated links
 
       // Transition exiting links to the parent's new position.
       link.exit().transition(transition).remove()
