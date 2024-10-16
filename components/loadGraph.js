@@ -1,13 +1,14 @@
 "use client"
 
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useCallback } from 'react'
 import * as d3 from 'd3'
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 
-export default function CollapsibleTree({ data }) {
+export default function CollapsibleTree({ data, onNodeClick }) {
   const svgRef = useRef(null)
+  const treeRef = useRef(null)
 
-  useEffect(() => {
+  const renderTree = useCallback(() => {
     if (!data || !svgRef.current) return
 
     // Set chart dimensions
@@ -20,10 +21,10 @@ export default function CollapsibleTree({ data }) {
     const root = d3.hierarchy(data)
 
     // Adjust these values for spacing
-    const dx = 20; // Increase for more vertical spacing
-    const dy = (width - marginRight - marginLeft) / (1 + root.height) + 20; // Increase for more horizontal spacing
+    const dx = 20
+    const dy = (width - marginRight - marginLeft) / (1 + root.height) + 20
 
-    const tree = d3.tree().nodeSize([dx, dy]);
+    const tree = d3.tree().nodeSize([dx, dy])
     const diagonal = d3.linkHorizontal()
       .x(d => d.y)
       .y(d => d.x)
@@ -40,22 +41,18 @@ export default function CollapsibleTree({ data }) {
     const gLink = svg.append("g")
       .attr("fill", "none")
       .attr("stroke-opacity", 0.4)
-      .attr("stroke-width", 3); // Set a thicker stroke width
+      .attr("stroke-width", 3)
 
     const gNode = svg.append("g")
       .attr("cursor", "pointer")
       .attr("pointer-events", "all")
 
-    // Define an array of colors for the links
-    const linkColors = d3.schemeCategory10; // You can change this to any other color scheme
+    const linkColors = d3.schemeCategory10
 
-    // Update function to refresh the tree layout
-    function update(event, source) {
-      const duration = event?.altKey ? 2500 : 250
+    function update(source) {
       const nodes = root.descendants().reverse()
       const links = root.links()
 
-      // Compute the new tree layout.
       tree(root)
 
       let left = root
@@ -68,23 +65,22 @@ export default function CollapsibleTree({ data }) {
       const height = right.x - left.x + marginTop + marginBottom
 
       const transition = svg.transition()
-        .duration(duration)
+        .duration(250)
         .attr("height", height)
         .attr("viewBox", [-marginLeft, left.x - marginTop, width, height])
         .tween("resize", window.ResizeObserver ? null : () => () => svg.dispatch("toggle"))
 
-      // Update the nodes…
       const node = gNode.selectAll("g")
         .data(nodes, d => d.id)
 
-      // Enter any new nodes at the parent's previous position.
       const nodeEnter = node.enter().append("g")
         .attr("transform", d => `translate(${source.y0},${source.x0})`)
         .attr("fill-opacity", 0)
         .attr("stroke-opacity", 0)
         .on("click", (event, d) => {
           d.children = d.children ? null : d._children
-          update(event, d)
+          update(d)
+          onNodeClick(d)
         })
 
       nodeEnter.append("circle")
@@ -97,72 +93,65 @@ export default function CollapsibleTree({ data }) {
         .attr("x", d => d._children ? -8 : 8)
         .attr("text-anchor", d => d._children ? "end" : "start")
         .text(d => d.data.name)
-        .attr("fill", "white") // Change text color to white for better visibility
+        .attr("fill", "white")
         .clone(true).lower()
-        .attr("stroke", "black") // Adjust stroke color for better contrast
+        .attr("stroke", "black")
         .attr("stroke-width", 3)
 
-      // Transition nodes to their new position.
-      const nodeUpdate = node.merge(nodeEnter).transition(transition)
+      node.merge(nodeEnter).transition(transition)
         .attr("transform", d => `translate(${d.y},${d.x})`)
         .attr("fill-opacity", 1)
         .attr("stroke-opacity", 1)
 
-      // Transition exiting nodes to the parent's new position.
-      const nodeExit = node.exit().transition(transition).remove()
+      node.exit().transition(transition).remove()
         .attr("transform", d => `translate(${source.y},${source.x})`)
         .attr("fill-opacity", 0)
         .attr("stroke-opacity", 0)
 
-      // Update the links…
       const link = gLink.selectAll("path")
         .data(links, d => d.target.id)
 
-      // Enter any new links at the parent's previous position.
-      const linkEnter = link.enter().append("path")
+      link.enter().append("path")
         .attr("d", d => {
           const o = { x: source.x0, y: source.y0 }
           return diagonal({ source: o, target: o })
         })
-        // Set the stroke color based on the index
         .attr("stroke", (d, i) => linkColors[i % linkColors.length])
-        .attr("stroke-width", 3); // Set a thicker stroke width for entering links
-
-      // Transition links to their new position.
-      link.merge(linkEnter).transition(transition)
+        .attr("stroke-width", 3)
+        .merge(link).transition(transition)
         .attr("d", diagonal)
-        .attr("stroke", (d, i) => linkColors[i % linkColors.length]) // Apply colors on update
-        .attr("stroke-width", 3); // Set a thicker stroke width for updated links
 
-      // Transition exiting links to the parent's new position.
       link.exit().transition(transition).remove()
         .attr("d", d => {
           const o = { x: source.x, y: source.y }
           return diagonal({ source: o, target: o })
         })
 
-      // Stash the old positions for transition.
       root.eachBefore(d => {
         d.x0 = d.x
         d.y0 = d.y
       })
     }
 
-    // Initial setup of the tree
     root.x0 = dy / 2
     root.y0 = 0
     root.descendants().forEach((d, i) => {
       d.id = i
       d._children = d.children
-      // Ensure no nodes are collapsed initially
       d.children = d._children
     })
 
-    update(null, root)
-  }, [data])
+    update(root)
+
+    treeRef.current = { root, update }
+  }, [data, onNodeClick])
+
+  useEffect(() => {
+    renderTree()
+  }, [renderTree])
 
   return (
-    <Card className="w-full max-w-[1200px] mx-auto ">
+    <Card className="w-full max-w-[1200px] mx-auto">
       <CardHeader>
         <CardTitle className="text-2xl font-bold">Array Methods and Properties</CardTitle>
       </CardHeader>
