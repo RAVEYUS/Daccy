@@ -23,6 +23,22 @@ export function NavbarComponent({
         <Link href="/">Daccy</Link>
       </h1>
       <nav className="flex items-center gap-4">
+        {/* Theme toggle button */}
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => setTheme(theme === "light" ? "dark" : "light")}
+          aria-label="Toggle theme"
+        >
+          {theme === "light" ? (
+            <Moon className="h-5 w-5" />
+          ) : (
+            <Sun className="h-5 w-5" />
+          )}
+          <span className="sr-only">Toggle theme</span>
+        </Button>
+
+        {/* Sign In / User button */}
         <SignedOut>
           <SignInButton>
             <Button variant="default">Sign In / Sign Up</Button>
@@ -31,26 +47,13 @@ export function NavbarComponent({
         <SignedIn>
           <UserButton afterSignOutUrl="/" />
         </SignedIn>
-        <div className="flex items-center gap-4">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setTheme(theme === "light" ? "dark" : "light")}
-            aria-label="Toggle theme"
-          >
-            {theme === "light" ? (
-              <Moon className="h-5 w-5" />
-            ) : (
-              <Sun className="h-5 w-5" />
-            )}
-            <span className="sr-only">Toggle theme</span>
-          </Button>
-          {showBackButton && (
-            <Link href={backButtonRoute}>
-              <Button>Back to Home</Button>
-            </Link>
-          )}
-        </div>
+
+        {/* Back button */}
+        {showBackButton && (
+          <Link href={backButtonRoute}>
+            <Button>Back to Home</Button>
+          </Link>
+        )}
       </nav>
     </header>
   )
