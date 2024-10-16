@@ -28,11 +28,13 @@ export async function POST(req: Request) {
     if (language) {
       prompt = `You are an AI tutor specializing in ${selectedTopic} using ${language}. 
                 The user's prompt is: "${message}". 
+                Don't quote the user's prompt
                 Please provide a helpful, concise response tailored to their level of understanding (${understandingLevel}).
                 If code examples are appropriate, please include them.`
     } else {
       prompt = `You are an AI tutor specializing in ${selectedTopic}. 
                 The user's prompt is: "${message}". 
+                Don't quote the user's prompt
                 Please provide a helpful, concise response tailored to their level of understanding (${understandingLevel}).
                 If relevant examples are appropriate, please include them.`;
     }

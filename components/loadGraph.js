@@ -4,7 +4,7 @@ import React, { useEffect, useRef, useCallback } from 'react'
 import * as d3 from 'd3'
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 
-export default function CollapsibleTree({ data, onNodeClick }) {
+export default function CollapsibleTree({ data, onNodeClick}) {
   const svgRef = useRef(null)
   const treeRef = useRef(null)
 

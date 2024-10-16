@@ -70,7 +70,7 @@ export default function LearningInterfaceComponent() {
       const welcomeMessage = selectedTopic.requiresLanguage
         ? `Welcome! I'll help you learn ${selectedTopic.title} in ${language}. Are you ready to start as a ${understanding}?`
         : `Welcome! I'll help you learn ${selectedTopic.title}. Are you ready to start as a ${understanding}?`
-      
+
       setMessages([{ content: welcomeMessage, isUser: false }])
       setShowChat(true)
     }
@@ -183,9 +183,29 @@ export default function LearningInterfaceComponent() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5 }}
                 >
-                  <h2 className="text-2xl mb-4">{selectedTopic.title}</h2>
-                  <p className="mb-6">{selectedTopic.description}</p>
-                  <form onSubmit={handleFormSubmit} className="flex gap-2 flex-col">
+                  <motion.h2
+                    className="text-2xl mb-4"
+                    initial={{ opacity: 0, x: -30 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.5, delay: 0.3 }}
+                  >
+                    {selectedTopic.title}
+                  </motion.h2>
+                  <motion.p
+                    className="mb-6"
+                    initial={{ opacity: 0, x: 30 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.5, delay: 0.4 }}
+                  >
+                    {selectedTopic.description}
+                  </motion.p>
+                  <motion.form
+                    onSubmit={handleFormSubmit}
+                    className="flex gap-2 flex-col"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: 0.5 }}
+                  >
                     {selectedTopic.requiresLanguage && (
                       <Select onValueChange={setLanguage} value={language}>
                         <SelectTrigger className="w-[180px]">
@@ -217,9 +237,16 @@ export default function LearningInterfaceComponent() {
 
                     <Button type="submit" disabled={selectedTopic.requiresLanguage && (!language || !understanding)}>
                       Start Learning
-                      <ChevronRight className="ml-2 h-4 w-4" />
+                      <motion.div
+                        initial={{ rotate: 90 }}
+                        animate={{ rotate: 0 }}
+                        transition={{ duration: 0.3 }}
+                        className="ml-2"
+                      >
+                        <ChevronRight className="h-4 w-4" />
+                      </motion.div>
                     </Button>
-                  </form>
+                  </motion.form>
                 </motion.div>
               )}
               {showChat && (
@@ -231,14 +258,18 @@ export default function LearningInterfaceComponent() {
                 >
                   <ScrollArea className="flex-grow mb-4">
                     {messages.map((message, index) => (
-                      <div
+                      <motion.div
                         key={index}
-                        className={`mb-4 p-3 rounded-lg ${message.isUser ? 'bg-primary text-primary-foreground ml-auto' : 'bg-muted'} max-w-[80%]`}
+                        className={`mb-4 p-3 rounded-lg ${message.isUser ? 'bg-primary text-primary-foreground ml-auto' : 'bg-muted'
+                          } max-w-[80%]`}
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ duration: 0.3, delay: index * 0.1 }}
                       >
-                        <div className='font-sans whitespace-pre-wrap break-words'>
+                        <div className="font-sans whitespace-pre-wrap break-words">
                           {message.content}
                         </div>
-                      </div>
+                      </motion.div>
                     ))}
                   </ScrollArea>
                   <div className="flex gap-2 ">
