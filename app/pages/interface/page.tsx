@@ -14,6 +14,7 @@ import {
 import { useTheme } from "next-themes";
 import { motion } from "framer-motion";
 import Link from "next/link";
+import { NavbarComponent } from "@/components/navbar";
 
 export default function Component() {
   const { setTheme, theme } = useTheme();
@@ -30,30 +31,8 @@ export default function Component() {
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground flex flex-col items-center justify-center">
-      <nav className="flex items-center justify-between p-4 border-b w-full">
-        <h1 className="text-2xl">
-          <Link href="/">Daccy</Link>
-        </h1>
-        <div className="flex items-center gap-4">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setTheme(theme === "light" ? "dark" : "light")}
-          >
-            {theme === "light" ? (
-              <Moon className="h-5 w-5" />
-            ) : (
-              <Sun className="h-5 w-5" />
-            )}
-            <span className="sr-only">Toggle theme</span>
-          </Button>
-          <Link href="/">
-            <Button>Back to Home</Button>
-          </Link>
-        </div>
-      </nav>
-
+    <div className="min-h-screen bg-background text-foreground flex flex-col">
+      <NavbarComponent showBackButton={true} backButtonRoute="/" />
       <main className="container mx-auto p-4 flex flex-col items-center justify-center flex-grow">
         <motion.div
           className="grid grid-cols-1 md:grid-cols-2 gap-6"

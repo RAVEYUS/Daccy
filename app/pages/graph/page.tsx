@@ -1,6 +1,7 @@
 "use client"
 
 import CollapsibleTree from '@/components/loadGraph'
+import { NavbarComponent } from '@/components/navbar'
 
 const nodes = {
   name: "Array",
@@ -77,8 +78,11 @@ const nodes = {
 
 export default function TreePage() {
   return (
+    <div>
+      <NavbarComponent showBackButton={true} backButtonRoute="/pages/graphtopic" />
     <div className="container mx-auto py-10">
       <CollapsibleTree data={nodes} />
+    </div>
     </div>
   )
 }

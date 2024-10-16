@@ -14,6 +14,7 @@ import { Badge } from "@/components/ui/badge"
 import { useTheme } from "next-themes"
 import { motion } from "framer-motion"
 import Link from "next/link"
+import { NavbarComponent } from "@/components/navbar"
 
 export default function Component() {
     const { setTheme, theme } = useTheme()
@@ -47,26 +48,7 @@ export default function Component() {
 
     return (
         <div className="min-h-screen bg-background text-foreground flex flex-col">
-            <header className="flex items-center justify-between p-4 border-b w-full">
-            <h1 className="text-2xl"><Link href="/">Daccy</Link></h1>
-                <div className="flex items-center gap-4">
-                    <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => setTheme(theme === "light" ? "dark" : "light")}
-                    >
-                        {theme === "light" ? (
-                            <Moon className="h-5 w-5" />
-                        ) : (
-                            <Sun className="h-5 w-5" />
-                        )}
-                        <span className="sr-only">Toggle theme</span>
-                    </Button>
-                    <Link href="/pages/interface">
-                        <Button>Back</Button>
-                    </Link>
-                </div>
-            </header>
+           <NavbarComponent showBackButton={true} backButtonRoute="/pages/interface" />
             <main className="container mx-auto p-6">
                 <section className="mb-12">
                     <h2 className="text-3xl font-sans mb-4">Algorithm Realms</h2>
