@@ -170,7 +170,7 @@ export default function AIDebugChallenge() {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <p>{suggestion || ''}</p>
+                <pre className='font-sans whitespace-pre-wrap break-words'>{suggestion || ''}</pre>
               </CardContent>
             </Card>
 
@@ -195,7 +195,7 @@ export default function AIDebugChallenge() {
                 </CardHeader>
                 <CardContent>
                   <div className="bg-muted p-4 rounded-md overflow-x-auto">
-                    <Editor height="60vh" theme={theme === 'dark' ? 'vs-dark' : 'light'} language={language} value={buggyCode} />
+                    <Editor height="97vh" theme={theme === 'dark' ? 'vs-dark' : 'light'} language={language} value={buggyCode} />
                   </div>
                 </CardContent>
               </Card>
