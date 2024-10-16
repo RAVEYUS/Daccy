@@ -8,12 +8,12 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { MessageCircle, Send, X } from "lucide-react"
+import { MessageCircle, Send } from "lucide-react"
 import { nodes } from '/lib/arrayMethodsData.js'
 
 export default function ArrayMethodsExplorer() {
   const [selectedTopic, setSelectedTopic] = useState(null)
-  const [aiResponse, setAiResponse] = useState(null)
+  const [aiResponses, setAiResponses] = useState({})  // State to store AI responses per topic
   const [isChatOpen, setIsChatOpen] = useState(false)
   const [chatMessages, setChatMessages] = useState([])
   const [inputMessage, setInputMessage] = useState("")
@@ -22,8 +22,12 @@ export default function ArrayMethodsExplorer() {
   const handleNodeClick = useCallback(async (node) => {
     const topic = node.data.name;
     setSelectedTopic(topic);
-    await fetchAIResponse(topic);
-  }, [])
+    
+    // Check if we already have a response for the selected topic
+    if (!aiResponses[topic]) {
+      await fetchAIResponse(topic);
+    }
+  }, [aiResponses])
 
   const fetchAIResponse = async (topic) => {
     try {
@@ -43,17 +47,16 @@ export default function ArrayMethodsExplorer() {
       }
 
       const data = await response.json();
-      setAiResponse(data.reply);
+      setAiResponses((prev) => ({ ...prev, [topic]: data.reply })); // Store the response in state
     } catch (error) {
       console.error('Error fetching AI response:', error);
-      setAiResponse("Sorry, an error occurred while fetching the response.");
+      setAiResponses((prev) => ({ ...prev, [topic]: "Sorry, an error occurred while fetching the response." }));
     }
   }
 
   const handleClickOutside = useCallback((event) => {
     if (popupRef.current && !popupRef.current.contains(event.target)) {
       setSelectedTopic(null)
-      setAiResponse(null);
       setIsChatOpen(false);
     }
   }, [])
@@ -120,8 +123,8 @@ export default function ArrayMethodsExplorer() {
                   <CardContent className="flex-grow overflow-hidden flex flex-col">
                     <ScrollArea className="flex-grow mb-4">
                       <div className="space-y-4 p-4">
-                        {aiResponse ? (
-                          <pre className="whitespace-pre-wrap">{aiResponse}</pre>
+                        {aiResponses[selectedTopic] ? (
+                          <pre className="font-sans whitespace-pre-wrap">{aiResponses[selectedTopic]}</pre>
                         ) : (
                           <p>Loading AI response...</p>
                         )}
