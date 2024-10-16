@@ -37,10 +37,13 @@ const languages = [
   'Python', 'JavaScript', 'Java', 'C++', 'TypeScript', 'Rust'
 ]
 
+const understandingLevels = ['Beginner', 'Intermediate', 'Advanced']
+
 export default function LearningInterfaceComponent() {
   const [mounted, setMounted] = useState(false)
   const [selectedTopic, setSelectedTopic] = useState<Topic | null>(null)
   const [language, setLanguage] = useState('')
+  const [understanding, setUnderstanding] = useState('')
   const [showChat, setShowChat] = useState(false)
   const [messages, setMessages] = useState<{ content: string; isUser: boolean }[]>([])
   const [inputMessage, setInputMessage] = useState('')
@@ -55,28 +58,27 @@ export default function LearningInterfaceComponent() {
     setSelectedTopic(topic)
     setShowChat(false)
     setMessages([])
-    if (!topic.requiresLanguage) {
-      setLanguage('')
-      setShowChat(true)
-      setMessages([{ content: `Welcome! I'm ready to help you learn about ${topic.title}. What would you like to know?`, isUser: false }])
-    }
+    setLanguage('')
+    setUnderstanding('')
   }
 
-  const handleLanguageSubmit = (e: React.FormEvent) => {
+  const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     if (selectedTopic) {
-      if (selectedTopic.requiresLanguage && !language) return
-      setShowChat(true)
+      if (selectedTopic.requiresLanguage && (!language || !understanding)) return
+
       const welcomeMessage = selectedTopic.requiresLanguage
-        ? `Welcome! I'm ready to help you learn about ${selectedTopic.title} in ${language}. What would you like to know?`
-        : `Welcome! I'm ready to help you learn about ${selectedTopic.title}. What would you like to know?`
+        ? `Welcome! I'll help you learn ${selectedTopic.title} in ${language}. Are you ready to start as a ${understanding}?`
+        : `Welcome! I'll help you learn ${selectedTopic.title}. Are you ready to start as a ${understanding}?`
+      
       setMessages([{ content: welcomeMessage, isUser: false }])
+      setShowChat(true)
     }
   }
 
   const sendMessage = async () => {
     if (!inputMessage.trim() || !selectedTopic) return
-    if (selectedTopic.requiresLanguage && !language) return
+    if (selectedTopic.requiresLanguage && (!language || !understanding)) return
 
     const userMessage = { content: inputMessage, isUser: true }
     setMessages(prev => [...prev, userMessage])
@@ -92,7 +94,8 @@ export default function LearningInterfaceComponent() {
         body: JSON.stringify({
           message: inputMessage,
           selectedTopic: selectedTopic.id,
-          language: selectedTopic.requiresLanguage ? language : undefined
+          language: selectedTopic.requiresLanguage ? language : undefined,
+          understandingLevel: understanding
         }),
       })
 
@@ -148,9 +151,7 @@ export default function LearningInterfaceComponent() {
                       key={topic.id}
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
-                      className={`cursor-pointer p-4 rounded-lg shadow-md flex flex-col items-center justify-center text-center aspect-square ${
-                        selectedTopic?.id === topic.id ? 'bg-primary text-primary-foreground' : 'bg-card-foreground/10'
-                      }`}
+                      className={`cursor-pointer p-4 rounded-lg shadow-md flex flex-col items-center justify-center text-center aspect-square ${selectedTopic?.id === topic.id ? 'bg-primary text-primary-foreground' : 'bg-card-foreground/10'}`}
                       onClick={() => handleTopicSelect(topic)}
                     >
                       <div className="mb-2">{topic.icon}</div>
@@ -184,7 +185,7 @@ export default function LearningInterfaceComponent() {
                 >
                   <h2 className="text-2xl mb-4">{selectedTopic.title}</h2>
                   <p className="mb-6">{selectedTopic.description}</p>
-                  <form onSubmit={handleLanguageSubmit} className="flex gap-2">
+                  <form onSubmit={handleFormSubmit} className="flex gap-2 flex-col">
                     {selectedTopic.requiresLanguage && (
                       <Select onValueChange={setLanguage} value={language}>
                         <SelectTrigger className="w-[180px]">
@@ -199,7 +200,22 @@ export default function LearningInterfaceComponent() {
                         </SelectContent>
                       </Select>
                     )}
-                    <Button type="submit" disabled={selectedTopic.requiresLanguage && !language}>
+
+                    {/* Understanding level dropdown */}
+                    <Select onValueChange={setUnderstanding} value={understanding}>
+                      <SelectTrigger className="w-[180px]">
+                        <SelectValue placeholder="Select Understanding Level" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {understandingLevels.map((level) => (
+                          <SelectItem key={level} value={level}>
+                            {level}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+
+                    <Button type="submit" disabled={selectedTopic.requiresLanguage && (!language || !understanding)}>
                       Start Learning
                       <ChevronRight className="ml-2 h-4 w-4" />
                     </Button>
@@ -217,9 +233,7 @@ export default function LearningInterfaceComponent() {
                     {messages.map((message, index) => (
                       <div
                         key={index}
-                        className={`mb-4 p-3 rounded-lg ${
-                          message.isUser ? 'bg-primary text-primary-foreground ml-auto' : 'bg-muted'
-                        } max-w-[80%]`}
+                        className={`mb-4 p-3 rounded-lg ${message.isUser ? 'bg-primary text-primary-foreground ml-auto' : 'bg-muted'} max-w-[80%]`}
                       >
                         <div className='font-sans whitespace-pre-wrap break-words'>
                           {message.content}

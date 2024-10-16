@@ -15,7 +15,7 @@ const safetySettings = [
 
 export async function POST(req: Request) {
   try {
-    const { message, selectedTopic, language } = await req.json()
+    const { message, selectedTopic, language, understandingLevel } = await req.json()
 
     if (!message || !selectedTopic) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
@@ -27,14 +27,14 @@ export async function POST(req: Request) {
     let prompt: string;
     if (language) {
       prompt = `You are an AI tutor specializing in ${selectedTopic} using ${language}. 
-                The user's question is: "${message}"
-                Please provide a helpful, concise response tailored to their level of understanding.
+                The user's prompt is: "${message}". 
+                Please provide a helpful, concise response tailored to their level of understanding (${understandingLevel}).
                 If code examples are appropriate, please include them.`
     } else {
       prompt = `You are an AI tutor specializing in ${selectedTopic}. 
-                The user's question is: "${message}"
-                Please provide a helpful, concise response tailored to their level of understanding.
-                If relevant examples are appropriate, please include them.`
+                The user's prompt is: "${message}". 
+                Please provide a helpful, concise response tailored to their level of understanding (${understandingLevel}).
+                If relevant examples are appropriate, please include them.`;
     }
 
     const result = await model.generateContent(prompt)
