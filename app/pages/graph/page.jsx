@@ -6,11 +6,17 @@ import CollapsibleTree from '@/components/loadGraph'
 import { NavbarComponent } from '@/components/navbar'
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { MessageCircle, Send, X } from "lucide-react"
 import { nodes } from '/lib/arrayMethodsData.js'
 
 export default function ArrayMethodsExplorer() {
   const [selectedTopic, setSelectedTopic] = useState(null)
   const [aiResponse, setAiResponse] = useState(null)
+  const [isChatOpen, setIsChatOpen] = useState(false)
+  const [chatMessages, setChatMessages] = useState([])
+  const [inputMessage, setInputMessage] = useState("")
   const popupRef = useRef(null)
 
   const handleNodeClick = useCallback(async (node) => {
@@ -48,6 +54,7 @@ export default function ArrayMethodsExplorer() {
     if (popupRef.current && !popupRef.current.contains(event.target)) {
       setSelectedTopic(null)
       setAiResponse(null);
+      setIsChatOpen(false);
     }
   }, [])
 
@@ -57,6 +64,35 @@ export default function ArrayMethodsExplorer() {
       document.removeEventListener('mousedown', handleClickOutside)
     }
   }, [handleClickOutside])
+
+  const handleChatSubmit = async (e) => {
+    e.preventDefault()
+    if (!inputMessage.trim()) return
+
+    const newMessage = { role: 'user', content: inputMessage }
+    setChatMessages([...chatMessages, newMessage])
+    setInputMessage("")
+
+    try {
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ message: inputMessage }),
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch chat response')
+      }
+
+      const data = await response.json()
+      setChatMessages(prevMessages => [...prevMessages, { role: 'assistant', content: data.reply }])
+    } catch (error) {
+      console.error('Error fetching chat response:', error)
+      setChatMessages(prevMessages => [...prevMessages, { role: 'assistant', content: "Sorry, an error occurred." }])
+    }
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -81,8 +117,8 @@ export default function ArrayMethodsExplorer() {
                     <CardTitle>{selectedTopic}</CardTitle>
                     <CardDescription>More information about this Topic</CardDescription>
                   </CardHeader>
-                  <CardContent className="flex-grow overflow-hidden">
-                    <ScrollArea className="h-full">
+                  <CardContent className="flex-grow overflow-hidden flex flex-col">
+                    <ScrollArea className="flex-grow mb-4">
                       <div className="space-y-4 p-4">
                         {aiResponse ? (
                           <pre className="whitespace-pre-wrap">{aiResponse}</pre>
@@ -91,6 +127,41 @@ export default function ArrayMethodsExplorer() {
                         )}
                       </div>
                     </ScrollArea>
+                    <div className="mt-4">
+                      <Button
+                        onClick={() => setIsChatOpen(!isChatOpen)}
+                        className="w-full"
+                      >
+                        <MessageCircle className="mr-2 h-4 w-4" />
+                        {isChatOpen ? "Close Chat" : "Open Chat"}
+                      </Button>
+                    </div>
+                    {isChatOpen && (
+                      <div className="mt-4 border-t pt-4">
+                        <ScrollArea className="h-48 mb-4">
+                          <div className="space-y-4">
+                            {chatMessages.map((msg, index) => (
+                              <div key={index} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                                <div className={`max-w-[80%] p-2 rounded-lg ${msg.role === 'user' ? 'bg-primary text-primary-foreground' : 'bg-secondary'}`}>
+                                  {msg.content}
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </ScrollArea>
+                        <form onSubmit={handleChatSubmit} className="flex items-center space-x-2">
+                          <Input
+                            type="text"
+                            placeholder="Type your message..."
+                            value={inputMessage}
+                            onChange={(e) => setInputMessage(e.target.value)}
+                          />
+                          <Button type="submit" size="icon">
+                            <Send className="h-4 w-4" />
+                          </Button>
+                        </form>
+                      </div>
+                    )}
                   </CardContent>
                 </Card>
               </motion.div>
