@@ -65,11 +65,14 @@ export default function LearningInterfaceComponent() {
   const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     if (selectedTopic) {
-      if (selectedTopic.requiresLanguage && (!language || !understanding)) return
+      if (selectedTopic.requiresLanguage && (!language || !understanding)) {
+        // Don't proceed if language and understanding are required but not selected
+        return
+      }
 
       const welcomeMessage = selectedTopic.requiresLanguage
         ? `Welcome! I'll help you learn ${selectedTopic.title} in ${language}. Are you ready to start as a ${understanding}?`
-        : `Welcome! I'll help you learn ${selectedTopic.title}. Are you ready to start as a ${understanding}?`
+        : `Welcome! I'll help you learn ${selectedTopic.title}. Are you ready to start?`
 
       setMessages([{ content: welcomeMessage, isUser: false }])
       setShowChat(true)
@@ -119,6 +122,12 @@ export default function LearningInterfaceComponent() {
     topic.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
     topic.category.toLowerCase().includes(searchTerm.toLowerCase())
   )
+
+  const canProceed = selectedTopic
+    ? selectedTopic.requiresLanguage
+      ? language !== '' && understanding !== ''
+      : understanding !== ''
+    : false
 
   if (!mounted) return null
 
@@ -235,7 +244,7 @@ export default function LearningInterfaceComponent() {
                       </SelectContent>
                     </Select>
 
-                    <Button type="submit" disabled={selectedTopic.requiresLanguage && (!language || !understanding)}>
+                    <Button type="submit" disabled={!canProceed}>
                       Start Learning
                       <motion.div
                         initial={{ rotate: 90 }}
