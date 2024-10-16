@@ -39,7 +39,7 @@ export default function ArrayMethodsExplorer() {
               <Card>
                 <CardHeader>
                   <CardTitle>{selectedTopic}</CardTitle>
-                  <CardDescription>More information about this topic</CardDescription>
+                  <CardDescription>More information about this Topic</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
