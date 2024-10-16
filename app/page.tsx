@@ -45,7 +45,7 @@ export default function LandingPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-         Master Your Concept's Like Never Before
+          Master Data Structures & Algorithms
         </motion.h2>
 
         <motion.p
@@ -57,8 +57,8 @@ export default function LandingPage() {
           Learn, practice, and excel with our AI-powered learning companion
         </motion.p>
 
-        <motion.div
-          whileHover={{ scale: 1.05 }}
+        <motion.div 
+          whileHover={{ scale: 1.05 }} 
           whileTap={{ scale: 0.95 }}
           className="mb-12"
         >
@@ -67,19 +67,7 @@ export default function LandingPage() {
             <ChevronRight className="ml-2 h-4 w-4" />
           </Button>
         </motion.div>
-        <motion.div
-          className="mt-12 flex items-center justify-center"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 1.6 }}
-        >
-          <p className="text-sm text-muted-foreground mr-2 mb-0.5 mt-2">Powered by</p>
-          <img
-            src="https://cdn.freelogovectors.net/wp-content/uploads/2024/02/gemini-logo-chatbot-freelogovectors.net_-640x400.png"
-            alt="Gemini Logo"
-            className="w-14 h-auto"
-          />
-        </motion.div>
+
         <div className="flex flex-wrap gap-6 mb-12 justify-between">
           {features.map((feature, index) => (
             <motion.div
@@ -91,8 +79,9 @@ export default function LandingPage() {
               className="w-full md:w-[30%] mb-6"
             >
               <Card
-                className={`h-full p-4 transition duration-300 border ${theme === 'dark' ? 'border-transparent hover:border-white' : 'border-transparent hover:border-black'
-                  }`}
+                className={`h-full p-4 transition duration-300 border ${
+                  theme === 'dark' ? 'border-transparent hover:border-white' : 'border-transparent hover:border-black'
+                }`}
               >
                 <CardHeader>
                   <feature.icon className="h-10 w-10 text-primary mb-2" />
@@ -105,8 +94,9 @@ export default function LandingPage() {
         </div>
 
         <motion.div
-          className={`bg-muted p-8 rounded-lg transition duration-300 border ${theme === 'dark' ? 'border-transparent hover:border-white' : 'border-transparent hover:border-black'
-            }`}
+          className={`bg-muted p-8 rounded-lg transition duration-300 border ${
+            theme === 'dark' ? 'border-transparent hover:border-white' : 'border-transparent hover:border-black'
+          }`}
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.2, delay: 1.4 }}
@@ -120,7 +110,19 @@ export default function LandingPage() {
           </Button>
         </motion.div>
 
-
+        <motion.div
+          className="mt-12 flex items-center justify-center"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 1.6 }}
+        >
+          <p className="text-sm text-muted-foreground mr-2 mb-0.5 mt-2">Powered by</p>
+          <img
+            src="https://cdn.freelogovectors.net/wp-content/uploads/2024/02/gemini-logo-chatbot-freelogovectors.net_-640x400.png"
+            alt="Gemini Logo"
+            className="w-14 h-auto"
+          />
+        </motion.div>
       </main>
 
       <footer className="bg-background py-8">
