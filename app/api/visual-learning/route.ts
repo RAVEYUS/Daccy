@@ -1,31 +1,61 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
 import { NextResponse } from 'next/server';
+import { GoogleGenerativeAI } from "@google/generative-ai";
+import { HarmBlockThreshold, HarmCategory } from "@google/generative-ai";
 
-const apiKey = process.env.GEMINI_API_KEY;
+// Define safety settings for the AI model
+const safetySettings = [
+  {
+    category: HarmCategory.HARM_CATEGORY_HARASSMENT,
+    threshold: HarmBlockThreshold.BLOCK_LOW_AND_ABOVE,
+  },
+  {
+    category: HarmCategory.HARM_CATEGORY_HATE_SPEECH,
+    threshold: HarmBlockThreshold.BLOCK_LOW_AND_ABOVE,
+  },
+];
 
-export async function GET() {
+// POST request handler
+export async function POST(req: Request) {
   try {
-    const genAI = new GoogleGenerativeAI(apiKey || "");
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    // Parse the incoming request data
+    const { selectedTopic , language} = await req.json();
 
-    // Generate nodes structure
-    const nodesPrompt = `Generate a comprehensive structure of JavaScript Array methods and properties...`;
-    const nodesResult = await model.generateContent(nodesPrompt);
-    const nodesContent = await nodesResult.response.text();
-    const nodes = JSON.parse(nodesContent);
+    // Validate required fields
+    if (!selectedTopic) {
+      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+    }
 
-    // Generate topicInfoMap
-    const topicInfoPrompt = `Generate a topicInfoMap for JavaScript Array methods and properties...`;
-    const topicInfoResult = await model.generateContent(topicInfoPrompt);
-    const topicInfoContent = await topicInfoResult.response.text();
-    const topicInfoMap = JSON.parse(topicInfoContent);
+    // Initialize Google Generative AI model
+    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY as string);
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash", safetySettings });
 
-    console.log("Nodes generated:", nodes);  // Debugging log
-    console.log("Topic Info Map generated:", topicInfoMap);  // Debugging log
+    // Construct the prompt for the AI model
+    const prompt = createPrompt(selectedTopic, language);
 
-    return NextResponse.json({ nodes, topicInfoMap });
+    // Generate content from the AI model
+    const result = await model.generateContent(prompt);
+    const aiResponse = result.response.text();
+
+    // Return the AI's response
+    return NextResponse.json({ reply: aiResponse });
   } catch (error) {
-    console.error('Error generating array information:', error);
-    return NextResponse.json({ error: 'Failed to generate array information' }, { status: 500 });
+    console.error('Error:', error);
+    return NextResponse.json({ error: 'An error occurred while processing your request' }, { status: 500 });
   }
+}
+
+// Helper function to create a prompt based on the input parameters
+function createPrompt(selectedTopic: string, language?: string): string {
+  let basePrompt = `You are an AI tutor specializing in ${selectedTopic}.`;
+
+  // Include language context if provided
+  if (language) {
+    basePrompt = `You are an AI tutor specializing in ${selectedTopic} using ${language}. 
+                  ${basePrompt}`;
+  }
+
+  // Suggest including code examples if applicable
+  basePrompt += ` If code examples are appropriate, please include them.`;
+
+  return basePrompt;
 }
