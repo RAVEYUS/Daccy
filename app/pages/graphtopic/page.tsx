@@ -59,7 +59,7 @@ export default function TopicExplorer() {
 
     return (
         <div className="min-h-screen bg-background text-foreground ">
-            <NavbarComponent />
+            <NavbarComponent showBackButton={true} backButtonRoute="/pages/interface" />
             <div className="container mx-auto px-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                     {topics.map((topic, index) => (

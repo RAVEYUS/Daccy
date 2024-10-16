@@ -36,7 +36,7 @@ export default function LandingPage() {
 
   return (
     <div className={`min-h-screen bg-background text-foreground ${inter.className}`}>
-      <NavbarComponent />
+      <NavbarComponent showBackButton={false} />
 
       <main className="container mx-auto px-6 py-12 text-center">
         <motion.h2

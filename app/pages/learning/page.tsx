@@ -121,7 +121,7 @@ export default function LearningInterfaceComponent() {
 
   return (
     <div className={`min-h-screen bg-background text-foreground ${inter.className}`}>
-      <NavbarComponent />
+      <NavbarComponent showBackButton={true} backButtonRoute="/pages/interface" />
 
       <main className="container mx-auto px-6 py-1 mb-2">
         <div className="flex flex-col md:flex-row gap-6 mt-2">

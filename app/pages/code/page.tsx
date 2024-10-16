@@ -92,7 +92,7 @@ export default function AIDebugChallenge() {
 
   return (
     <div className={`min-h-screen bg-background text-foreground ${inter.className}`}>
-      <NavbarComponent />
+      <NavbarComponent showBackButton={true} backButtonRoute="/pages/interface" />
       <main className="container mx-auto px-6 py-12">
         <div className="flex flex-col md:flex-row gap-6 mb-12">
           <div className="md:w-1/3 space-y-6">
