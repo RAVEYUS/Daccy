@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { ChevronRight, BookOpen, Code, MessageSquare, Moon, Sun, BugIcon, GhostIcon, LightbulbIcon, MessageCircleIcon } from 'lucide-react';
+import { ChevronRight, BookOpen, Code, MessageSquare, Moon, Sun, BugIcon, GhostIcon, LightbulbIcon, MessageCircleIcon, CheckCircle } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -27,6 +27,8 @@ export default function AIDebugChallenge() {
   const [error, setError] = useState<string | null>(null);
   const [dotCount, setDotCount] = useState(0);
   const [suggestion, setSuggestion] = useState<string>('');
+  const [checkingCode, setCheckingCode] = useState<boolean>(false);
+  const [checkResult, setCheckResult] = useState<string | null>(null);
 
   useEffect(() => {
     setMounted(true);
@@ -48,7 +50,7 @@ export default function AIDebugChallenge() {
 
     setLoading(true);
     setError(null);
-    setBuggyCode(''); // Clear previous buggy code
+    setBuggyCode('');
     setSuggestion('');
     setProblemTitle('');
 
@@ -67,14 +69,29 @@ export default function AIDebugChallenge() {
       }
 
       const data = await response.json();
-      setBuggyCode(data.code); // Assuming the API returns 'code' as buggy code
-      setSuggestion(data.hint || 'Try to identify and fix the bug in the code!'); // Assuming the API returns 'hint'
+      setBuggyCode(data.code);
+      setSuggestion(data.hint || 'Try to identify and fix the bug in the code!');
       setProblemTitle(data.problemTitleText);
     } catch (err) {
       console.error('Detailed error:', err);
       setError('An error occurred while generating the buggy code. Please try again.');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleCheckCode = async () => {
+    setCheckingCode(true);
+    setCheckResult(null);
+    try {
+      // Simulating an API call to check the code
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      setCheckResult("Great job! You've successfully identified and fixed the bug.");
+    } catch (err) {
+      console.error('Error checking code:', err);
+      setCheckResult("An error occurred while checking the code. Please try again.");
+    } finally {
+      setCheckingCode(false);
     }
   };
 
@@ -173,7 +190,6 @@ export default function AIDebugChallenge() {
                 <pre className='font-sans whitespace-pre-wrap break-words'>{suggestion || ''}</pre>
               </CardContent>
             </Card>
-
           </div>
 
           <div className="md:w-2/3 space-y-6">
@@ -195,8 +211,27 @@ export default function AIDebugChallenge() {
                 </CardHeader>
                 <CardContent>
                   <div className="bg-muted p-4 rounded-md overflow-x-auto">
-                    <Editor height="97vh" theme={theme === 'dark' ? 'vs-dark' : 'light'} language={language} value={buggyCode} />
+                    <Editor height="66vh" theme={theme === 'dark' ? 'vs-dark' : 'light'} language={language} value={buggyCode} />
                   </div>
+                  <Button
+                    onClick={handleCheckCode}
+                    className="w-full mt-4"
+                    disabled={checkingCode}
+                  >
+                    {checkingCode ? (
+                      <>Checking Code {'.'.repeat(dotCount)}</>
+                    ) : (
+                      <>
+                        <CheckCircle className="mr-2 h-5 w-5" />
+                        Check Code
+                      </>
+                    )}
+                  </Button>
+                  {checkResult && (
+                    <p className={`mt-2 text-center ${checkResult.includes('Great job') ? 'text-green-500' : 'text-red-500'}`}>
+                      {checkResult}
+                    </p>
+                  )}
                 </CardContent>
               </Card>
             )}

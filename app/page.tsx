@@ -23,11 +23,11 @@ export default function LandingPage() {
   }, [setTheme])
 
   const features = [
-    { icon: BookOpen, title: 'Comprehensive DSA Topics', description: 'Learn everything from basic arrays to advanced graph algorithms.' },
-    { icon: Code, title: 'Interactive Coding Challenges', description: 'Practice your skills with our real-time coding environment.' },
-    { icon: MessageSquare, title: 'AI-Powered Assistance', description: 'Get personalized help and explanations from our AI tutor.' },
-  ]
-
+    { icon: BookOpen, title: 'Comprehensive Topics', description: 'Master everything from the basics to advanced concepts.' },
+    { icon: Code, title: 'Interactive Coding Challenges', description: 'Sharpen your skills with real-time coding exercises.' },
+    { icon: MessageSquare, title: 'AI-Powered Assistance', description: 'Receive tailored guidance and explanations from our AI tutor.' },
+    { icon: MessageSquare, title: 'Visual Learning', description: 'Enhance your understanding with effective visual aids.' },
+  ];
   const redirectToNextPage = () => {
     router.push('/pages/interface')
   }
@@ -45,7 +45,7 @@ export default function LandingPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          Master Data Structures & Algorithms
+          Master Your Concept's Like Never Before
         </motion.h2>
 
         <motion.p
@@ -68,30 +68,31 @@ export default function LandingPage() {
           </Button>
         </motion.div>
 
-        <div className="flex flex-wrap gap-6 mb-12 justify-between">
-          {features.map((feature, index) => (
-            <motion.div
-              key={feature.title}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.8 + index * 0.2 }}
-              whileHover={{ scale: 1.05, transition: { duration: 0.2 } }}
-              className="w-full md:w-[30%] mb-6"
-            >
-              <Card
-                className={`h-full p-4 transition duration-300 border ${
-                  theme === 'dark' ? 'border-transparent hover:border-white' : 'border-transparent hover:border-black'
-                }`}
-              >
-                <CardHeader>
-                  <feature.icon className="h-10 w-10 text-primary mb-2" />
-                  <CardTitle>{feature.title}</CardTitle>
-                  <CardDescription>{feature.description}</CardDescription>
-                </CardHeader>
-              </Card>
-            </motion.div>
-          ))}
-        </div>
+        <div className="flex flex-wrap lg:flex-nowrap gap-6 mb-12 justify-between">
+  {features.map((feature, index) => (
+    <motion.div
+      key={feature.title}
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, delay: 0.8 + index * 0.2 }}
+      whileHover={{ scale: 1.05, transition: { duration: 0.2 } }}
+      className="w-full md:w-[30%] mb-6"
+    >
+      <Card
+        className={`h-full p-4 transition duration-300 border ${
+          theme === 'dark' ? 'border-transparent hover:border-white' : 'border-transparent hover:border-black'
+        }`}
+      >
+        <CardHeader>
+          <feature.icon className="h-10 w-10 text-primary mb-2" />
+          <CardTitle>{feature.title}</CardTitle>
+          <CardDescription>{feature.description}</CardDescription>
+        </CardHeader>
+      </Card>
+    </motion.div>
+  ))}
+</div>
+
 
         <motion.div
           className={`bg-muted p-8 rounded-lg transition duration-300 border ${
