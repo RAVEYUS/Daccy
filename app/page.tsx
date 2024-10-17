@@ -21,13 +21,13 @@ export default function LandingPage() {
     setMounted(true)
     setTheme('dark')
   }, [setTheme])
-
   const features = [
-    { icon: BookOpen, title: 'Comprehensive Topics', description: 'Master everything from the basics to advanced concepts.' },
-    { icon: Code, title: 'Interactive Coding Challenges', description: 'Sharpen your skills with real-time coding exercises.' },
-    { icon: MessageSquare, title: 'AI-Powered Assistance', description: 'Receive tailored guidance and explanations from our AI tutor.' },
-    { icon: MessageSquare, title: 'Visual Learning', description: 'Enhance your understanding with effective visual aids.' },
+    { icon: BookOpen, title: 'Visual Learning', description: 'Discover how to enhance your understanding through visual techniques.' },
+    { icon: Code, title: 'Problem Puzzles', description: 'Challenge yourself with AI-generated puzzles.' },
+    { icon: MessageSquare, title: 'Generative Learning', description: 'Personalized AI-driven learning experiences.' },
+    { icon: MessageSquare, title: 'Challenge Yourself', description: 'Generate code according to your level and debug.' },
   ];
+  
   const redirectToNextPage = () => {
     router.push('/pages/interface')
   }
