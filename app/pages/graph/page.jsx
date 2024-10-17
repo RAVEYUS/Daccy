@@ -1,7 +1,8 @@
 "use client"
 
-import React, { useState, useEffect, useRef, useCallback } from 'react'
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { memo } from 'react'  // Import memo
 import CollapsibleTree from '@/components/loadGraph'
 import { NavbarComponent } from '@/components/navbar'
 import { ScrollArea } from "@/components/ui/scroll-area"
@@ -9,7 +10,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { MessageCircle, Send } from "lucide-react"
-import { nodes } from '/lib/arrayMethodsData.js'
+import { nodes as arrayMethodsData } from '/lib/arrayMethodsData.js'
+
+// Memoize the CollapsibleTree component to prevent re-rendering
+const MemoizedCollapsibleTree = memo(CollapsibleTree);
 
 export default function ArrayMethodsExplorer() {
   const [selectedTopic, setSelectedTopic] = useState(null)
@@ -19,16 +23,21 @@ export default function ArrayMethodsExplorer() {
   const [inputMessage, setInputMessage] = useState("")
   const popupRef = useRef(null)
 
+  // Memoize nodes to avoid re-creating the array on every render
+  const nodes = useMemo(() => arrayMethodsData, []);
+
+  // Handle node click (memoized)
   const handleNodeClick = useCallback(async (node) => {
     const topic = node.data.name;
     setSelectedTopic(topic);
-    
+
     // Check if we already have a response for the selected topic
     if (!aiResponses[topic]) {
       await fetchAIResponse(topic);
     }
   }, [aiResponses])
 
+  // Fetch AI response for the selected topic
   const fetchAIResponse = async (topic) => {
     try {
       const response = await fetch('/api/visual-learning', {
@@ -54,6 +63,7 @@ export default function ArrayMethodsExplorer() {
     }
   }
 
+  // Handle clicks outside the popup (memoized)
   const handleClickOutside = useCallback((event) => {
     if (popupRef.current && !popupRef.current.contains(event.target)) {
       setSelectedTopic(null)
@@ -68,6 +78,7 @@ export default function ArrayMethodsExplorer() {
     }
   }, [handleClickOutside])
 
+  // Handle chat submit
   const handleChatSubmit = async (e) => {
     e.preventDefault()
     if (!inputMessage.trim()) return
@@ -101,10 +112,11 @@ export default function ArrayMethodsExplorer() {
     <div className="min-h-screen bg-background">
       <NavbarComponent showBackButton={true} backButtonRoute="/pages/graphtopic" />
       <div className="container mx-auto py-10">
-        <h1 className="text-3xl font-bold mb-6">Array Methods Explorer</h1>
+        <h1 className="text-3xl font-bold mb-6">Arrays in JS</h1>
         <div className="relative">
-          <CollapsibleTree data={nodes} onNodeClick={handleNodeClick} />
-          
+          {/* Render the memoized tree */}
+          <MemoizedCollapsibleTree data={nodes} onNodeClick={handleNodeClick} />
+
           <AnimatePresence>
             {selectedTopic && (
               <motion.div
@@ -140,24 +152,31 @@ export default function ArrayMethodsExplorer() {
                       </Button>
                     </div>
                     {isChatOpen && (
-                      <div className="mt-4 border-t pt-4">
-                        <ScrollArea className="h-48 mb-4">
-                          <div className="space-y-4">
-                            {chatMessages.map((msg, index) => (
-                              <div key={index} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                                <div className={`max-w-[80%] p-2 rounded-lg ${msg.role === 'user' ? 'bg-primary text-primary-foreground' : 'bg-secondary'}`}>
-                                  {msg.content}
+                      <div className="mt-4 border-t pt-4 flex flex-col h-64"> {/* Flex column layout with fixed height */}
+
+                        {/* Scrollable message area with proper flex-grow */}
+                        <div className="flex-grow overflow-hidden">
+                          <ScrollArea className="flex-grow"> {/* ScrollArea takes up the full height */}
+                            <div className="space-y-4 p-2"> {/* Add padding for messages */}
+                              {chatMessages.map((msg, index) => (
+                                <div key={index} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                                  <div className={`max-w-[70%] p-2 rounded-lg ${msg.role === 'user' ? 'bg-primary text-primary-foreground' : 'bg-secondary'}`}>
+                                    {msg.content}
+                                  </div>
                                 </div>
-                              </div>
-                            ))}
-                          </div>
-                        </ScrollArea>
-                        <form onSubmit={handleChatSubmit} className="flex items-center space-x-2">
+                              ))}
+                            </div>
+                          </ScrollArea>
+                        </div>
+
+                        {/* Input form stays fixed at the bottom */}
+                        <form onSubmit={handleChatSubmit} className="flex items-center space-x-2 mt-2"> {/* Use margin-top to separate */}
                           <Input
                             type="text"
                             placeholder="Type your message..."
                             value={inputMessage}
                             onChange={(e) => setInputMessage(e.target.value)}
+                            className="flex-grow"  
                           />
                           <Button type="submit" size="icon">
                             <Send className="h-4 w-4" />
@@ -165,6 +184,7 @@ export default function ArrayMethodsExplorer() {
                         </form>
                       </div>
                     )}
+
                   </CardContent>
                 </Card>
               </motion.div>

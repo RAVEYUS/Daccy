@@ -153,7 +153,7 @@ export default function CollapsibleTree({ data, onNodeClick}) {
   return (
     <Card className="w-full max-w-[1200px] mx-auto">
       <CardHeader>
-        <CardTitle className="text-2xl font-bold">Array Methods and Properties</CardTitle>
+        <CardTitle className="text-2xl font-bold">Mindmap</CardTitle>
       </CardHeader>
       <CardContent className="p-6">
         <div className="overflow-x-auto">

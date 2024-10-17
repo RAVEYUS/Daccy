@@ -45,7 +45,7 @@ export default function LandingPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          Master Your Concept's Like Never Before
+          Master Your Concepts Like Never Before
         </motion.h2>
 
         <motion.p
